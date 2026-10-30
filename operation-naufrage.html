@@ -1,0 +1,1987 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Opération Naufrage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3efe6; --surface:#fffdf8; --surface2:#f7f2e7; --ink:#17191f; --muted:#646a76; --line:#ddd5c4;
+  --blue:#1f3c8f; --red:#d42a2f; --gold:#a97c1f; --good:#1f7a45; --bad:#c23a2e; --goodbg:#e2f2e7; --badbg:#fbe5e1;
+  --shadow:0 1px 2px rgba(20,20,30,.06),0 10px 30px rgba(20,20,30,.07);
+  --overlay:rgba(18,20,26,.55);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1116; --surface:#181b23; --surface2:#1f232d; --ink:#ecebe6; --muted:#9ba1ad; --line:#2c313d;
+    --blue:#8aa6ff; --red:#ff6168; --gold:#e3b456; --good:#53c985; --bad:#ff6b5e; --goodbg:#163020; --badbg:#3a1a18;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35); --overlay:rgba(0,0,0,.65);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1116; --surface:#181b23; --surface2:#1f232d; --ink:#ecebe6; --muted:#9ba1ad; --line:#2c313d;
+  --blue:#8aa6ff; --red:#ff6168; --gold:#e3b456; --good:#53c985; --bad:#ff6b5e; --goodbg:#163020; --badbg:#3a1a18;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35); --overlay:rgba(0,0,0,.65);
+}
+*{box-sizing:border-box}
+html,body{margin:0;overflow-x:hidden}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,sans-serif;padding-bottom:56px;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer}
+.stripe{height:6px;background:linear-gradient(90deg,#1f3c8f 0 33.3%,#fff 33.3% 66.6%,#d42a2f 66.6%)}
+.wrap{max-width:1180px;margin:0 auto;padding:20px 16px}
+.muted{color:var(--muted)}
+h1,h2,.brand,.anton{font-family:Anton,Impact,sans-serif;font-weight:400;letter-spacing:.01em}
+
+/* ---------- Écran d'accueil ---------- */
+.hero{padding:22px 0 8px}
+.kicker{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:600}
+.hero h1{font-size:clamp(44px,8vw,86px);line-height:.95;margin:10px 0 14px;text-transform:uppercase}
+.hero h1 span{color:var(--red)}
+.lead{font-size:17px;max-width:760px;margin:0 0 18px}
+.goals{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:900px}
+.goal{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.goal b{display:block;font-size:15px}
+.goal span{font-size:13px;color:var(--muted)}
+.rules{margin:14px 0 4px;max-width:900px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.rules summary{cursor:pointer;font-weight:700}
+.rules ul{margin:8px 0 4px;padding-left:20px}
+.rules li{margin:4px 0}
+.sec{font-size:30px;margin:28px 0 12px;text-transform:uppercase}
+.chars{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.char{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:10px;text-align:left;transition:transform .15s,border-color .15s}
+.char:hover{transform:translateY(-3px);border-color:var(--c)}
+.char .top{display:flex;gap:12px;align-items:center}
+.av{width:62px;height:62px;border-radius:50%;background:var(--c);color:#fff;display:grid;place-items:center;font-family:Anton,sans-serif;font-size:24px;position:relative;flex:none}
+.av .em{position:absolute;right:-6px;bottom:-4px;font-size:22px}
+.av.sm{width:38px;height:38px;font-size:15px}
+.av.sm .em{font-size:14px;right:-5px;bottom:-4px}
+.char h3{margin:0;font-size:19px}
+.char .nick{font-size:13px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.char p{margin:0;font-size:14px}
+.char .trait{font-size:13px;background:var(--surface2);border-radius:10px;padding:8px 10px}
+.char .diff{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.char .go{margin-top:auto;background:var(--c);color:#fff;border:0;border-radius:10px;padding:11px;font-weight:700}
+.disclaimer{font-size:12px;color:var(--muted);margin-top:22px;max-width:900px}
+.best{font-size:12px;color:var(--muted)}
+
+/* ---------- Jeu ---------- */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.brand{font-size:26px;text-transform:uppercase}
+.brand span{color:var(--red)}
+.turninfo{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.pill{background:var(--ink);color:var(--bg);border-radius:99px;padding:4px 12px;font-weight:700;font-size:13px}
+.me{display:flex;gap:10px;align-items:center}
+.me small{display:block;color:var(--muted);font-size:12px}
+.progress{display:grid;grid-template-columns:repeat(20,1fr);gap:3px;margin-bottom:14px}
+.progress i{height:5px;border-radius:3px;background:var(--line)}
+.progress i.done{background:var(--ink)}
+.progress i.now{background:var(--red)}
+.stats{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;gap:10px;margin-bottom:14px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;min-width:0}
+.tl{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:700}
+.num{font-family:Anton,sans-serif;font-size:28px;line-height:1.15;margin:2px 0;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile.big .num{font-size:30px;color:var(--red)}
+.sub{font-size:12px;color:var(--muted)}
+.bar{height:8px;background:var(--surface2);border:1px solid var(--line);border-radius:6px;position:relative;margin-top:20px;overflow:visible}
+.bar.nolbl{margin-top:8px}
+.bar>em.end::after{left:auto;right:0;transform:none}
+.bar>i{position:absolute;inset:0 auto 0 0;border-radius:6px;background:var(--fill,var(--ink));transition:width .5s}
+.bar>em{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--gold);font-style:normal}
+.bar>em::after{content:attr(data-l);position:absolute;top:-17px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--gold);font-weight:700;white-space:nowrap}
+.tile.warn{border-color:var(--red)}
+.layout{display:grid;grid-template-columns:1fr 320px;gap:14px;align-items:start}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:var(--shadow);animation:pop .35s ease}
+@keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.cardhead{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+.src{font-size:12px;font-weight:700;border-radius:99px;padding:3px 10px;border:1px solid var(--line);background:var(--surface2)}
+.src.real{color:var(--blue)}
+.src.fut{color:var(--gold)}
+.card h2{font-size:clamp(26px,3.4vw,36px);line-height:1.08;margin:12px 0 10px}
+.card .txt{font-size:16px;margin:0 0 16px}
+.jokerbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--surface2);border:1px dashed var(--line);border-radius:12px;padding:10px 12px;margin-bottom:14px}
+.joker{background:var(--ink);color:var(--bg);border:0;border-radius:9px;padding:8px 12px;font-weight:700}
+.joker:disabled{opacity:.35;cursor:not-allowed}
+.jokerbar small{color:var(--muted);flex:1;min-width:200px;font-size:12.5px}
+.armed{font-size:12px;font-weight:700;color:var(--good)}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{display:grid;grid-template-columns:32px 1fr;gap:4px 12px;text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;transition:border-color .12s,transform .12s,background .12s}
+.opt:hover{border-color:var(--ink);transform:translateX(3px);background:var(--surface2)}
+.opt .k{grid-row:span 2;width:32px;height:32px;border-radius:8px;background:var(--surface2);border:1px solid var(--line);display:grid;place-items:center;font-weight:800;font-size:14px}
+.opt .ot{font-weight:600}
+.hints{display:flex;gap:6px;flex-wrap:wrap}
+.hint{font-size:11.5px;border-radius:6px;padding:1px 7px;font-weight:600}
+.hint.good{background:var(--goodbg);color:var(--good)}
+.hint.bad{background:var(--badbg);color:var(--bad)}
+.hint.neu{background:var(--surface2);color:var(--muted)}
+.side{display:flex;flex-direction:column;gap:14px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px}
+.panel h4{margin:0 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.log{list-style:none;margin:0;padding:0;max-height:330px;overflow:auto;font-size:13px}
+.log li{padding:7px 0;border-bottom:1px solid var(--line)}
+.log li:last-child{border:0}
+.log b{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.toggle{display:flex;gap:8px;align-items:center;font-size:13px;cursor:pointer}
+.objline{display:flex;justify-content:space-between;font-size:13px;padding:3px 0}
+.ok{color:var(--good);font-weight:700}
+.ko{color:var(--muted)}
+
+/* ---------- Ticker ---------- */
+#ticker{position:fixed;left:0;right:0;bottom:0;height:42px;background:var(--red);color:#fff;display:none;align-items:center;overflow:hidden;z-index:20;font-weight:600;font-size:14px}
+#ticker .lbl{flex:none;background:#111;color:#fff;font-family:Anton,sans-serif;letter-spacing:.04em;padding:0 14px;height:100%;display:flex;align-items:center;z-index:1;text-transform:uppercase}
+#ticker .run{white-space:nowrap;display:inline-block;padding-left:100%;animation:run var(--dur,60s) linear infinite}
+#ticker .run span{margin-right:48px}
+#ticker .run span::before{content:"◆ ";opacity:.7}
+@keyframes run{to{transform:translateX(-100%)}}
+.tick-wrap{overflow:hidden;flex:1}
+
+/* ---------- Modales ---------- */
+.overlay{position:fixed;inset:0;background:var(--overlay);display:flex;align-items:center;justify-content:center;padding:16px;z-index:50}
+.overlay.hidden{display:none}
+.modal{background:var(--surface);border:1px solid var(--line);border-radius:18px;max-width:640px;width:100%;max-height:calc(100vh - 32px);overflow:auto;padding:22px;box-shadow:var(--shadow);animation:pop .25s ease}
+.modal h3{font-family:Anton,sans-serif;font-weight:400;font-size:30px;line-height:1.1;margin:6px 0 10px}
+.modal .txt{font-size:16px;margin:0 0 14px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.chip{border-radius:9px;padding:6px 10px;font-size:13px;font-weight:700}
+.chip.good{background:var(--goodbg);color:var(--good)}
+.chip.bad{background:var(--badbg);color:var(--bad)}
+.legend{font-size:11.5px;color:var(--muted)}
+.box{background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:10px 0;font-size:14px}
+.box b.t{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:2px}
+.alert{background:var(--badbg);color:var(--bad);border-radius:12px;padding:10px 12px;margin:10px 0;font-weight:600;font-size:14px}
+.alert.g{background:var(--goodbg);color:var(--good)}
+.btn{background:var(--ink);color:var(--bg);border:0;border-radius:10px;padding:12px 18px;font-weight:700}
+.btn.alt{background:var(--surface2);color:var(--ink);border:1px solid var(--line)}
+.btn.red{background:var(--red);color:#fff}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.crowd{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.crowd>div{background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.crowd .num{font-size:26px}
+.slider{margin:14px 0 6px}
+.slider input{width:100%;accent-color:var(--blue)}
+.slider .row{display:flex;justify-content:space-between;font-size:13px;gap:10px;flex-wrap:wrap}
+.crsnum{font-family:Anton,sans-serif;font-size:24px}
+.mopts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.mopts button{text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:10px 12px}
+.mopts button:hover{border-color:var(--ink)}
+.mopts button b{display:block}
+.mopts button small{color:var(--muted);font-size:12px}
+.mopts button.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+.mopts button.primary small{color:rgba(255,255,255,.8)}
+
+/* ---------- Toasts ---------- */
+#toasts{position:fixed;top:14px;right:14px;display:flex;flex-direction:column;gap:8px;z-index:60;max-width:min(360px,calc(100vw - 28px))}
+.toast{background:var(--ink);color:var(--bg);border-radius:12px;padding:10px 14px;font-size:14px;font-weight:600;box-shadow:var(--shadow);animation:pop .25s ease}
+
+/* ---------- Fin ---------- */
+.endhero{text-align:center;padding:26px 0 10px}
+.endhero h1{font-size:clamp(40px,7vw,76px);margin:6px 0 8px;line-height:1;text-transform:uppercase}
+.endhero .story{max-width:720px;margin:0 auto;font-size:17px}
+.score{display:inline-block;margin:18px auto 4px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 26px}
+.score .num{font-size:52px;color:var(--red)}
+.rank{font-weight:800;font-size:18px}
+.endstats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:20px 0}
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.charts svg{width:100%;height:auto;display:block}
+.center{text-align:center}
+
+/* ---------- Portraits & mini-vidéos ---------- */
+.face{display:block;border-radius:50%;flex:none;background:var(--surface2);box-shadow:0 0 0 2px var(--surface),0 0 0 3px var(--line)}
+.clip{position:relative;border-radius:14px;overflow:hidden;aspect-ratio:640/300;background:#000;margin:0 0 14px}
+.clip svg{width:100%;height:100%;display:block}
+.clip .live{position:absolute;top:10px;left:10px;background:rgba(0,0,0,.62);color:#fff;font:700 11px/1 Inter,sans-serif;letter-spacing:.08em;padding:5px 8px;border-radius:6px;display:flex;gap:6px;align-items:center}
+.clip .live i{width:8px;height:8px;border-radius:50%;background:#ff3030;animation:k-blink 1s linear infinite}
+.clip .place{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.62);color:#fff;font:600 11px/1 Inter,sans-serif;padding:5px 8px;border-radius:6px;max-width:55%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.clip .cap{position:absolute;left:10px;right:10px;bottom:12px;color:#fff;font:700 13px/1.3 Inter,sans-serif;background:rgba(0,0,0,.55);padding:5px 9px;border-radius:6px}
+.clip .tlb{position:absolute;left:0;right:0;bottom:0;height:4px;background:rgba(255,255,255,.2)}
+.clip .tlb i{display:block;height:100%;width:0;background:#ff3030;animation:k-tlb 8s linear infinite}
+@keyframes k-tlb{to{width:100%}}
+.react{display:flex;gap:14px;align-items:center;margin:4px 0 12px}
+.bubble{position:relative;background:var(--surface2);border:1px solid var(--line);border-radius:14px;padding:8px 12px;font-weight:600;font-size:14px}
+.bubble::before{content:"";position:absolute;left:-7px;top:50%;width:12px;height:12px;background:var(--surface2);border-left:1px solid var(--line);border-bottom:1px solid var(--line);transform:translateY(-50%) rotate(45deg)}
+.cardtop{display:flex;gap:14px;align-items:center}
+.sound{background:var(--surface2);border:1px solid var(--line);border-radius:99px;padding:4px 12px;font-size:13px;font-weight:600}
+.endhero .clip{max-width:760px;margin:0 auto 18px}
+
+/* animations des scènes (jamais d'attribut transform sur un élément animé) */
+.clip [class^="a-"],.clip [class*=" a-"]{transform-box:fill-box;transform-origin:center}
+.a-bob{animation:k-bob .6s ease-in-out infinite alternate}
+.a-jump{animation:k-jump .45s ease-in-out infinite alternate}
+.clip .a-flick{transform-origin:50% 100%;animation:k-flick .22s ease-in-out infinite alternate}
+.a-smoke{animation:k-smoke 3.2s linear infinite}
+.a-gas{animation:k-gas 2.6s ease-out infinite}
+.a-adv{animation:k-adv 2.8s ease-in-out infinite alternate}
+.a-throw{animation:k-throw 2.4s ease-in infinite}
+.a-blink{animation:k-blink .5s linear infinite}
+.a-blink2{animation:k-blink2 1.1s ease-in-out infinite alternate}
+.a-march{animation:k-march 14s linear infinite}
+.a-wave{animation:k-wave 3s linear infinite}
+.a-fall{animation:k-fall 3.2s linear infinite}
+.a-spin{animation:k-spin 4s linear infinite}
+.a-pulse{animation:k-pulse 1.2s ease-in-out infinite alternate}
+.a-drive{animation:k-drive 8s linear infinite}
+.a-driveL{animation:k-driveL 12s linear infinite}
+.clip .a-dance{transform-origin:50% 100%;animation:k-dance .45s ease-in-out infinite alternate}
+.clip .a-beam{transform-origin:50% 0;animation:k-beam 2.6s ease-in-out infinite alternate}
+.clip .a-sway{transform-origin:50% 100%;animation:k-sway 1.4s ease-in-out infinite alternate}
+.clip .a-flag{transform-origin:0 50%;animation:k-flag .8s ease-in-out infinite alternate}
+.a-float{animation:k-float 3s linear infinite}
+.a-burst{animation:k-burst 2.2s ease-out infinite}
+.a-shake{animation:k-shake .2s linear infinite alternate}
+.clip .a-bang{transform-origin:80% 80%;animation:k-bang .6s ease-in-out infinite}
+.a-sink{animation:k-sink 9s ease-in infinite}
+.a-fly{animation:k-fly 9s linear infinite}
+.a-fly2{animation:k-fly2 7s linear infinite}
+.a-cloud{animation:k-cloud 14s ease-in-out infinite alternate}
+.a-talk{animation:k-talk .36s linear infinite}
+.clip .a-grow{transform-origin:50% 100%;animation:k-grow 4s ease-in-out infinite alternate}
+.a-draw{animation:k-draw 4s ease-out infinite}
+.a-yr{opacity:0;animation:k-yr 8s linear infinite}
+.a-twinkle{animation:k-twinkle 1.4s ease-in-out infinite alternate}
+.a-crab{animation:k-crab 3s ease-in-out infinite alternate}
+.a-flash{opacity:0;animation:k-flash 2.4s linear infinite}
+.a-pop{animation:k-pop 1.6s ease-out infinite}
+.a-paper{animation:k-paper 3s ease-in-out infinite}
+.a-swim{animation:k-swim 6s ease-in-out infinite alternate}
+.a-swim2{animation:k-swim 9s ease-in-out infinite alternate}
+.a-rain{animation:k-rain .8s linear infinite}
+.a-dash{animation:k-dash 1s linear infinite}
+.clip .a-melt{transform-origin:50% 100%;animation:k-melt 3s ease-in infinite}
+@keyframes k-bob{to{transform:translateY(-6px)}}
+@keyframes k-jump{to{transform:translateY(-14px)}}
+@keyframes k-flick{from{transform:scale(1.05,.85)}to{transform:scale(.9,1.15)}}
+@keyframes k-smoke{from{transform:translateY(0) scale(.6);opacity:.85}to{transform:translateY(-130px) scale(2.4);opacity:0}}
+@keyframes k-gas{from{transform:scale(.3);opacity:.9}to{transform:scale(2.6);opacity:0}}
+@keyframes k-adv{from{transform:translateX(-26px)}to{transform:translateX(12px)}}
+@keyframes k-throw{0%{transform:translate(0,0) rotate(0);opacity:1}50%{transform:translate(-90px,-70px) rotate(200deg)}100%{transform:translate(-180px,20px) rotate(400deg);opacity:0}}
+@keyframes k-blink{0%,49%{opacity:1}50%,100%{opacity:.1}}
+@keyframes k-blink2{from{opacity:.35}to{opacity:1}}
+@keyframes k-march{from{transform:translateX(-560px)}to{transform:translateX(700px)}}
+@keyframes k-wave{to{transform:translateX(-80px)}}
+@keyframes k-fall{from{transform:translateY(-60px) rotate(0)}to{transform:translateY(360px) rotate(540deg)}}
+@keyframes k-spin{to{transform:rotate(360deg)}}
+@keyframes k-pulse{to{transform:scale(1.08)}}
+@keyframes k-drive{to{transform:translateX(900px)}}
+@keyframes k-driveL{to{transform:translateX(-900px)}}
+@keyframes k-dance{from{transform:rotate(-8deg)}to{transform:rotate(8deg) translateY(-6px)}}
+@keyframes k-beam{from{transform:rotate(-24deg)}to{transform:rotate(24deg)}}
+@keyframes k-sway{from{transform:rotate(-8deg)}to{transform:rotate(8deg)}}
+@keyframes k-flag{from{transform:skewY(-8deg)}to{transform:skewY(8deg)}}
+@keyframes k-float{from{transform:translateY(0);opacity:1}to{transform:translateY(-150px);opacity:0}}
+@keyframes k-burst{from{transform:scale(.1);opacity:1}to{transform:scale(1.5);opacity:0}}
+@keyframes k-shake{from{transform:translate(-2px,0)}to{transform:translate(2px,1px)}}
+@keyframes k-bang{0%,100%{transform:rotate(0)}40%{transform:rotate(-45deg)}}
+@keyframes k-sink{0%{transform:none}20%{transform:rotate(3deg)}75%,100%{transform:translateY(120px) rotate(-16deg)}}
+@keyframes k-fly{from{transform:translate(-60px,0)}to{transform:translate(760px,-30px)}}
+@keyframes k-fly2{from{transform:translate(-320px,60px)}to{transform:translate(620px,-50px)}}
+@keyframes k-cloud{to{transform:translateX(-90px)}}
+@keyframes k-talk{0%,49%{opacity:0}50%,100%{opacity:1}}
+@keyframes k-grow{from{transform:scaleY(.25)}to{transform:scaleY(1)}}
+@keyframes k-draw{from{stroke-dashoffset:260}to{stroke-dashoffset:0}}
+@keyframes k-yr{0%,24%{opacity:1}25%,100%{opacity:0}}
+@keyframes k-twinkle{from{opacity:.2;transform:scale(.7)}to{opacity:1;transform:scale(1.1)}}
+@keyframes k-crab{from{transform:translateX(-30px)}to{transform:translateX(40px)}}
+@keyframes k-flash{0%,86%{opacity:0}88%{opacity:1}100%{opacity:0}}
+@keyframes k-pop{from{transform:translateY(0);opacity:1}to{transform:translateY(-70px);opacity:0}}
+@keyframes k-paper{0%{transform:translate(0,0) rotate(0);opacity:0}15%{opacity:1}100%{transform:translate(90px,-80px) rotate(320deg);opacity:0}}
+@keyframes k-swim{from{transform:translateX(-60px)}to{transform:translateX(60px)}}
+@keyframes k-rain{from{transform:translateY(-30px)}to{transform:translateY(310px)}}
+@keyframes k-dash{to{transform:translateX(-44px)}}
+@keyframes k-melt{0%{transform:scaleY(1)}100%{transform:scaleY(.4);opacity:.3}}
+@media (prefers-reduced-motion:reduce){.clip [class^="a-"],.clip [class*=" a-"]{animation-play-state:paused!important}}
+
+@media (max-width:980px){
+  .stats{grid-template-columns:1fr 1fr}
+  .tile.big{grid-column:1/-1}
+  .layout{grid-template-columns:1fr}
+  .chars{grid-template-columns:1fr}
+  .goals{grid-template-columns:1fr}
+  .endstats{grid-template-columns:1fr 1fr}
+  .charts{grid-template-columns:1fr}
+}
+@media (max-width:520px){
+  .card{padding:16px}
+  .mopts{grid-template-columns:1fr}
+  .crowd{grid-template-columns:1fr}
+  .tile.big .num{font-size:24px}
+  .num{font-size:24px}
+  .brand{font-size:21px}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="ticker"><div class="lbl">Flash info</div><div class="tick-wrap"><div class="run" id="tickrun"></div></div></div>
+<div id="overlay" class="overlay hidden"><div class="modal" id="modal"></div></div>
+<div id="toasts"></div>
+
+<script>
+/* =====================================================================
+   OPÉRATION NAUFRAGE — parodie de simulation politique française
+   ===================================================================== */
+
+const TURNS = 20;
+const PIB0 = 3080;     // PIB nominal 2027 (Md€), approximatif
+const DETTE0 = 3720;   // dette publique 2027 (Md€), approximatif
+const WIN_RATIO = 200, WIN_POP = 20;
+
+// [seuil dette/PIB, note, taux apparent moyen %]
+const RATINGS = [[85,"AAA",1.2],[95,"AA+",1.4],[105,"AA",1.6],[112,"AA-",1.8],[122,"A+",2.0],[130,"A",2.3],[138,"A-",2.7],[146,"BBB+",3.4],[155,"BBB",4.3],[165,"BBB-",5.4],[175,"BB",6.8],[185,"B",8.5],[200,"CCC",11.0],[Infinity,"D",14.0]];
+const SEASONS = ["Printemps","Été","Automne","Hiver"];
+const AGENCIES = ["Moody’s","S&P","Fitch"];
+
+const CHARS = {
+  macron:{
+    name:"Emmanuel Macron", nick:"Jupiter", initials:"EM", emoji:"🪐", color:"#1f3c8f", g:"m",
+    pop:24, col:35, ass:40, diff:"Difficulté : normale",
+    intro:"Grâce à une révision constitutionnelle passée au 49.3 (fiction totale), vous entamez un 3e mandat. Vous connaissez la maison : plus de 1 000 Md€ de dette ajoutés depuis 2017. L’échauffement est terminé.",
+    trait:"<b>Expert en dette :</b> toutes vos dépenses ponctuelles coûtent 10 % plus cher. Le talent, ça ne s’explique pas.",
+    joker:{name:"Dégainer le 49.3", icon:"⚡", desc:"La prochaine décision ne coûte aucune patience à l’Assemblée. Mais les Français détestent : −4 popularité, +8 colère.", e:{pop:-4,col:8}, toast:"⚡ 49.3 dégainé ! L’Assemblée est court-circuitée. Les Français, eux, sont branchés sur 380 volts."},
+    pm:"Édouard Provisoire",
+    win:"Vous annoncez la faillite de la France dans une allocution de 52 minutes, en anglais, depuis Station F. Pendant que le FMI atterrit à Roissy, vous décollez dans l’autre sens pour une tournée de conférences à 300 000 $ l’heure. La dette est convertie en « French Debt Token », un NFT qui perd 98 % de sa valeur en une soirée. Jupiter est tombé de l’Olympe, mais avec style."
+  },
+  melenchon:{
+    name:"Jean-Luc Mélenchon", nick:"Le Tribun", initials:"JLM", emoji:"📢", color:"#c8102e", g:"m",
+    pop:30, col:30, ass:35, diff:"Difficulté : facile côté dette, dur côté popularité",
+    intro:"À votre 4e tentative, c’est enfin la bonne. Vous arrivez à l’Élysée avec un programme chiffré à 250 Md€ et une voix qui porte jusqu’à Bruxelles. Sans micro.",
+    trait:"<b>Le bruit et la fureur :</b> tout ce qui augmente la colère sociale l’augmente de 25 % de plus. Le peuple vous entend. Les voisins aussi.",
+    joker:{name:"« La République, c’est moi ! »", icon:"📢", desc:"Un cri qui résonne dans tout le pays : −6 popularité, +8 colère, −8 patience de l’Assemblée.", e:{pop:-6,col:8,ass:-8}, toast:"📢 « LA RÉPUBLIQUE, C’EST MOI ! » La vidéo dépasse les 50 millions de vues en une heure."},
+    pm:"Camarade Mathilde Planification",
+    win:"Le FMI frappe à la porte de l’Élysée. Vous ouvrez en hurlant « La République, c’est moi ! » et le FMI répond calmement : « Plus maintenant. » La VIe République est proclamée le matin et placée sous tutelle de la Troïka l’après-midi. Vous partez en exil sur un chalutier : la France est enfin devenue une puissance maritime."
+  },
+  lepen:{
+    name:"Marine Le Pen", nick:"La Patronne", initials:"MLP", emoji:"🐈", color:"#0b2a5b", g:"f",
+    pop:40, col:28, ass:45, diff:"Difficulté : difficile (électorat très fidèle)",
+    intro:"Après un scénario de science-fiction juridique, vous êtes élue. Vous emménagez à l’Élysée avec vos chats et Jordan, qui filme tout pour TikTok, y compris la passation de pouvoir.",
+    trait:"<b>Électorat en béton :</b> vos pertes de popularité sont réduites de 15 %. Décevoir vos fans demande du travail.",
+    joker:{name:"« C’est la faute à Bruxelles ! »", icon:"🇪🇺", desc:"Bruxelles vous inflige une amende de 15 Md€ pour insolence budgétaire. −3 popularité, +4 colère.", e:{d:15,pop:-3,col:4}, toast:"🇪🇺 « C’est la faute à Bruxelles ! » Bruxelles répond par une amende de 15 Md€. Personne n’est surpris."},
+    pm:"Jordan",
+    win:"La France sort de l’euro, puis du franc, puis du troc. La Troïka débarque à Paris : vous accusez Bruxelles, puis la Troïka, puis Bruxelles à nouveau, par sécurité. Les huissiers saisissent l’Élysée, les meubles et même les chats. Jordan annonce la faillite en 59 secondes sur TikTok, avec un filtre chiot. 40 millions de vues. Record national."
+  }
+};
+
+/* ---------------------------------------------------------------------
+   Cartes de décision.  e = effets : d (dette ponctuelle Md€), def (déficit
+   primaire par trimestre, permanent), pop, col (colère), ass (patience de
+   l'Assemblée), assSet. manif = déclenche une manifestation.
+   --------------------------------------------------------------------- */
+const CARDS = [
+/* ======================= MACRON ======================= */
+{who:"macron", first:true, src:"Remake de 2017", title:"Le cadeau aux « premiers de cordée »",
+ text:"Pour fêter votre 3e mandat, vos amis de la French Tech suggèrent un geste fort envers ceux qui « réussissent ». Le ruissellement, c’est comme la pluie : ça finit toujours par tomber. Un jour. Peut-être.",
+ options:[
+  {t:"Supprimer l’IFI et baisser la flat tax à 25 %", e:{def:1.5,pop:-8,col:8}, r:"Les grandes fortunes vous envoient des chocolats. Les autres vous envoient des noms d’oiseaux. Le ruissellement est attendu pour 2071.", n:"Fiscalité : les ultra-riches remercient le Président « au nom de la Nation »"},
+  {t:"Supprimer aussi la taxe sur les yachts (mais garder celle sur les vélos)", e:{def:0.5,pop:-11,col:10}, r:"Trois yachts reviennent à Saint-Tropez. Les cyclistes défilent à Paris en pédalant très fort, et très en colère.", n:"Taxe yacht supprimée : « Il faut que les jeunes aient envie de devenir milliardaires »"},
+  {t:"Ne rien toucher, « en même temps »", e:{pop:1}, r:"Personne n’a compris si vous aviez fait quelque chose. C’est votre marque de fabrique.", n:"Réforme fiscale : le gouvernement fait « en même temps » rien du tout"}
+ ]},
+{who:"macron", src:"Remake de 2018", title:"Le service de vaisselle de l’Élysée",
+ text:"Le majordome est formel : il manque trois assiettes à dessert. Impossible de recevoir le roi d’Espagne avec de la vaisselle dépareillée, ce serait l’incident diplomatique.",
+ options:[
+  {t:"Commander 1 200 pièces de porcelaine de Sèvres (500 000 €)", e:{d:0.5,pop:-6,col:3}, r:"Les Français font le calcul : environ 400 € l’assiette. Ils mangent désormais dans des Tupperware, en signe de protestation.", n:"Polémique : le nouveau service de l’Élysée coûte « un plein de courses par assiette »"},
+  {t:"Faire construire une piscine à Brégançon, tant qu’on y est", e:{d:0.6,pop:-9,col:5}, r:"Vous inaugurez la piscine en maillot tricolore. Les photos font le tour du monde. Pas dans le bon sens.", n:"Brégançon : une piscine présidentielle « pour raisons de sécurité »"},
+  {t:"Aller chez IKEA avec Brigitte", e:{pop:3}, r:"Une photo de vous en train de monter une étagère BILLY fuite sur les réseaux. Votre popularité remonte. Catastrophe.", n:"Le Président chez IKEA : « Il manquait une vis, comme dans le budget »"}
+ ]},
+{who:"macron", src:"Remake de 2023", title:"Retraites : le retour du retour",
+ text:"La réforme à 64 ans a été votée, suspendue, re-votée, re-suspendue, puis égarée dans un tiroir de Matignon. Le Conseil d’orientation des retraites publie son 47e rapport : le système est « à la fois à l’équilibre et en faillite ».",
+ options:[
+  {t:"Retraite à 65 ans, adoptée au 49.3 un vendredi à 23 h", e:{def:-2.5,pop:-13,col:22,ass:-30}, manif:"retraites", r:"Le pays entier se met en grève. Même les retraités font grève, ce qui ne change rien, mais c’est symbolique.", n:"Retraites : le 49.3 dégainé pour la 24e fois, record olympique"},
+  {t:"Suspendre la réforme pour sauver le gouvernement", e:{def:1,pop:3,col:-8,ass:15}, r:"Le gouvernement survit. Bercy fait une crise d’angoisse. Les marchés haussent un sourcil.", n:"Retraites : la réforme suspendue « jusqu’à nouvel ordre ou nouveau gouvernement »"},
+  {t:"Retraite à 67 ans « en même temps » que retraite à 62 ans", e:{def:1.5,pop:-9,col:12,ass:-15}, r:"Le texte est si confus que le Conseil constitutionnel réclame une notice de montage. Tout le monde déteste, ce qui est une forme d’unité nationale.", n:"Réforme des retraites : « Personne n’a compris, donc personne n’est content »"}
+ ]},
+{who:"macron", src:"Remake de 2024", title:"Dissolution surprise",
+ text:"Un dimanche soir, après un résultat électoral décevant et un dîner prolongé avec trois conseillers, une idée géniale vous traverse : et si on dissolvait l’Assemblée ?",
+ options:[
+  {t:"Dissoudre ce soir à 21 h 02, sans prévenir le Premier ministre", e:{d:0.2,pop:-10,col:6,assSet:20}, r:"Le Premier ministre apprend la nouvelle sur son téléphone. La nouvelle Assemblée est encore plus ingouvernable que l’ancienne. Un chef-d’œuvre.", n:"Dissolution : « une clarification », assure l’Élysée. Personne n’y voit plus clair."},
+  {t:"Dissoudre deux fois de suite, pour être sûr", e:{d:0.4,pop:-15,col:10,assSet:8}, r:"Le Conseil constitutionnel rappelle que c’est interdit. Vous répondez que c’est « disruptif ». L’Assemblée est un champ de ruines.", n:"Double dissolution : les constitutionnalistes en arrêt maladie"},
+  {t:"Aller plutôt se coucher", e:{pop:2,ass:5}, r:"La nuit porte conseil. C’est la pire chose qui pouvait vous arriver.", n:"Le Président a bien dormi. La Bourse aussi."}
+ ]},
+{who:"macron", src:"Remake de 2018", title:"« Traverser la rue »",
+ text:"Lors d’une visite dans les jardins de l’Élysée, un jeune horticulteur au chômage vous interpelle : il ne trouve pas de travail. Les caméras tournent.",
+ options:[
+  {t:"« Je traverse la rue, je vous en trouve ! »", e:{pop:-6,col:5}, r:"La phrase devient un mème national. Les passages piétons de France sont tagués « JE CHERCHE DU TAFF ».", n:"Chômage : le Président recommande « la traversée de rue » comme politique de l’emploi"},
+  {t:"Lancer un Plan national « Traverser la rue » : 2 Md€ de passages piétons", e:{d:2,pop:-3}, r:"250 000 passages piétons sont repeints. Le chômage ne bouge pas, mais les rues sont extrêmement traversables.", n:"Emploi : 2 milliards pour des passages piétons « créateurs de valeur »"},
+  {t:"Lui offrir un poste de jardinier à l’Élysée", e:{pop:3}, r:"Il accepte. Il devient le seul employé de l’Élysée à être populaire.", n:"Le jardinier de l’Élysée plus populaire que le Président"}
+ ]},
+{who:"macron", src:"Remake de 2020", title:"« Quoi qu’il en coûte », la suite",
+ text:"Une crise frappe : les prix de l’énergie triplent et une épidémie de flemme collective paralyse le pays. Bercy attend vos ordres. La calculatrice tremble.",
+ options:[
+  {t:"« Quoi qu’il en coûte » : on ouvre toutes les vannes", e:{d:120,def:2,pop:5,col:-12}, r:"Chômage partiel, prêts garantis, chèques en tout genre. L’argent coule à flots. La dette aussi.", n:"« Quoi qu’il en coûte » : Bercy perd le compte après le onzième zéro"},
+  {t:"« Quoi qu’il en coûte… mais pas trop »", e:{d:35,pop:-4,col:6}, r:"Une demi-mesure qui coûte cher et ne satisfait personne. Bercy vous trouve « très vous ».", n:"Plan de soutien : « On ne lâchera rien, sauf un peu »"},
+  {t:"Rien. L’esprit start-up, c’est la résilience.", e:{pop:-10,col:15}, r:"Vous conseillez aux Français de « pivoter ». Ils pivotent vers la rue.", n:"Crise : le gouvernement conseille aux Français de « se réinventer »"}
+ ]},
+{who:"macron", src:"Remake de 2025", title:"Le Premier ministre démissionne (encore)",
+ text:"Votre Premier ministre a tenu 27 jours, dont 14 heures avec un gouvernement. Il faut en nommer un nouveau. La liste des volontaires est vide. Même la liste des non-volontaires est courte.",
+ options:[
+  {t:"Renommer le même : il n’a pas encore défait ses cartons", e:{pop:-5,ass:5}, r:"Il revient, épuisé. Il fait ses discours avec un carton de déménagement sous le bras.", n:"Matignon : le Premier ministre renommé « par souci de continuité de ses cartons »"},
+  {t:"Nommer un vétéran centriste de 82 ans", e:{pop:-2,ass:12}, r:"Il promet « l’esprit de responsabilité » et s’endort pendant les questions au gouvernement. L’Assemblée apprécie le calme.", n:"Nouveau Premier ministre : « L’expérience, c’est ce qu’il reste quand on n’a plus rien »"},
+  {t:"Gouverner seul depuis l’Élysée, en visio", e:{pop:-7,ass:-25,col:6}, r:"Vous êtes Président, Premier ministre et ministre de l’Intérieur. Le Conseil des ministres se tient dans votre salle de bains.", n:"Hyperprésidence : le Président se nomme lui-même à Matignon"}
+ ]},
+{who:"macron", src:"Remake de 2021–2025", title:"France 2030 : la licorne d’État",
+ text:"Vos conseillers ont une idée : transformer la France en « start-up nation » pour de vrai. Ils ont fait des slides. Beaucoup de slides.",
+ options:[
+  {t:"Investir 30 Md€ dans l’IA quantique blockchain verte", e:{d:30,pop:-2}, r:"La start-up d’État « Quantum Baguette » lève 30 Md€ et produit un PowerPoint. Valorisation finale : 0 €.", n:"Tech : la France crée sa première licorne… à pédales"},
+  {t:"Nommer un ministre du Métavers", e:{d:1,pop:-5}, r:"Le ministre tient ses réunions dans un jeu vidéo. Il se fait bannir pour comportement toxique.", n:"Gouvernement : le ministre du Métavers introuvable dans le monde réel"},
+  {t:"Annoncer « 109 Md€ d’investissements privés » (dont 0 vérifiés)", e:{pop:1}, r:"Les montants impressionnent à la télé. Personne ne vérifie. C’est ça, le génie français.", n:"Sommet IA : des milliards annoncés « en promesses d’intentions de projets »"}
+ ]},
+{who:"macron", src:"Remake de 2020–2024", title:"Le nucléaire, en même temps",
+ text:"Vous avez fermé Fessenheim en 2020, puis annoncé de nouveaux EPR en 2022. EDF demande ce qu’on fait maintenant. L’EPR de Flamanville, lui, a coûté environ quatre fois son budget initial et accusé douze ans de retard.",
+ options:[
+  {t:"Lancer 14 EPR2, livraison promise « vers 2035, au plus tard 2060 »", e:{d:25,def:0.5,pop:1}, r:"EDF ressort les plans de Flamanville et ajoute un zéro à tous les montants, par habitude.", n:"Nucléaire : 14 EPR commandés, 0 livré, 100 % de confiance"},
+  {t:"Fermer trois centrales, puis les rouvrir l’année suivante", e:{d:15,pop:-7,col:3}, r:"Les ouvriers ferment le portail le lundi et le rouvrent le vendredi. La politique énergétique la plus « en même temps » de l’Histoire.", n:"Énergie : trois centrales fermées puis rouvertes « pour vérifier qu’elles marchaient »"},
+  {t:"Illuminer la Tour Eiffel en direct depuis Flamanville", e:{d:2,pop:2}, r:"La Tour Eiffel clignote en vert fluo. C’est beau, ça coûte cher, c’est français.", n:"Flamanville alimente enfin quelque chose : la Tour Eiffel, 20 minutes par soir"}
+ ]},
+{who:"macron", src:"Remake de 2019–2025", title:"Assurance chômage, réforme n°8",
+ text:"Bercy veut encore réformer l’assurance chômage. C’est la huitième fois. Les chômeurs n’ont pas eu le temps de lire les sept premières.",
+ options:[
+  {t:"Réduire l’indemnisation à 6 mois et rendre les chômeurs « agiles »", e:{def:-1,pop:-8,col:9}, r:"Les chômeurs deviennent très agiles : ils sautent directement à la case manif.", n:"Chômage : le gouvernement veut des demandeurs d’emploi « en mode sprint »"},
+  {t:"Rebaptiser France Travail en « France Taf »", e:{d:0.4,pop:-2}, r:"Nouveau logo, nouvelles cartes de visite, mêmes files d’attente. 400 M€ de branding.", n:"France Taf : le nouveau logo a coûté plus cher que trois agences"},
+  {t:"Indemniser généreusement les chômeurs « créatifs » (DJ, influenceurs, coachs)", e:{def:2,pop:4}, r:"1,2 million de Français se déclarent soudain coachs en développement personnel.", n:"Explosion du nombre de coachs : « Je me suis développé personnellement aux Assedic »"}
+ ]},
+{who:"macron", src:"Remake de 2021", title:"Concours d’anecdotes avec des youtubeurs",
+ text:"Pour toucher les jeunes, votre équipe com’ propose un concours d’anecdotes avec deux youtubeurs célèbres. Les jeunes, eux, sont déjà passés à autre chose.",
+ options:[
+  {t:"Faire le concours dans les jardins de l’Élysée", e:{pop:3}, r:"La vidéo fait 15 millions de vues. Les jeunes vous trouvent « gênant mais sympa ». Votre popularité remonte, hélas.", n:"Le Président perd un concours d’anecdotes mais gagne 3 points"},
+  {t:"Lancer votre propre chaîne : « Manu explique la dette »", e:{d:0.05,pop:-4}, r:"Épisode 1 : 3 h 40 sur l’article 49 alinéa 3. 412 vues, dont 400 de vos conseillers.", n:"« Manu explique la dette » : l’épisode 2 est annulé faute de spectateurs"},
+  {t:"Danser 15 secondes sur TikTok devant le graphique de la dette", e:{pop:-2,col:2}, r:"Vous dansez devant la courbe de la dette. La courbe monte plus vite que vous.", n:"TikTok : la danse présidentielle déclenche une vague de mèmes"}
+ ]},
+
+/* ======================= MÉLENCHON ======================= */
+{who:"melenchon", first:true, src:"Promesse de 2022", title:"La retraite à 60 ans",
+ text:"Premier Conseil des ministres. Vous montez sur la table et proclamez : « Le temps libéré est un temps conquis ! » Les ministres applaudissent. Le ministre des Comptes publics pleure discrètement dans sa cravate.",
+ options:[
+  {t:"Retraite à 60 ans pour tous, avec 40 annuités", e:{def:7,pop:9,col:-10,ass:-15}, r:"Les futurs retraités dansent dans la rue. Les marchés obligataires dansent beaucoup moins.", n:"Retraite à 60 ans : les marchés financiers appellent leur psy"},
+  {t:"Retraite à 55 ans, et à 50 pour les métiers pénibles (dont député)", e:{def:16,pop:4,col:-5,ass:-30}, r:"Le Conseil d’orientation des retraites fait un malaise collectif. Berlin publie un communiqué inquiet en trois langues.", n:"Retraite à 55 ans : l’Allemagne demande « si c’est une blague »"},
+  {t:"Repousser à plus tard, « le temps de planifier »", e:{pop:-12,col:10}, r:"Vos électeurs ont l’impression d’avoir voté pour le précédent. Une sensation très désagréable.", n:"Retraites : les Insoumis découvrent le mot « plus tard »"}
+ ]},
+{who:"melenchon", src:"Promesse de 2022", title:"Le SMIC à 1 600 € net",
+ text:"Vous avez promis d’augmenter le SMIC. Le patronat a déjà rédigé 14 tribunes. Les boulangers recalculent le prix du croissant.",
+ options:[
+  {t:"SMIC à 1 600 € net, avec des aides aux PME", e:{def:3,pop:7,col:-6}, r:"Les salariés au SMIC respirent. Les PME aussi, grâce aux aides. Bercy, lui, a cessé de respirer.", n:"SMIC à 1 600 € : le patronat annonce « la fin de la civilisation », comme à chaque fois"},
+  {t:"SMIC à 2 000 € net, tout de suite", e:{def:8,pop:4,col:-4,ass:-20}, r:"La baguette passe à 2,40 €. Le pouvoir d’achat augmente puis s’évapore dans le prix du pain au chocolat.", n:"SMIC à 2 000 € : la chocolatine coûte désormais 3,10 €"},
+  {t:"Le revaloriser de 0,8 %, « comme d’habitude »", e:{pop:-9,col:7}, r:"Vos militants découvrent la social-démocratie. Ils n’aiment pas du tout.", n:"SMIC : +0,8 %, les Insoumis demandent qui a piraté le compte du Président"}
+ ]},
+{who:"melenchon", src:"Promesse de 2022", title:"Le blocage des prix",
+ text:"L’inflation repart. Vous avez promis de bloquer les prix des produits de première nécessité. Le problème : tout le monde a une définition différente de « première nécessité ».",
+ options:[
+  {t:"Bloquer le prix de cinq fruits et légumes", e:{def:0.8,pop:4}, r:"La pomme, la carotte, le poireau, la patate et la tomate sont protégés. La courgette se sent discriminée.", n:"Blocage des prix : la courgette porte plainte pour discrimination"},
+  {t:"Bloquer TOUS les prix, du Nutella au loyer", e:{def:5,pop:1,col:4}, r:"Les rayons se vident. Remake des émeutes du Nutella de 2018, mais dans tous les supermarchés de France.", n:"Pénurie générale : les Français font la queue pour un pot de pâte à tartiner"},
+  {t:"Créer un ministère de la Planification des pâtes", e:{d:0.5,pop:-3}, r:"Le ministère publie un plan quinquennal de la coquillette. L’Italie convoque l’ambassadeur.", n:"Crise diplomatique : Rome dénonce le « plan Coquillette »"}
+ ]},
+{who:"melenchon", src:"Remake de 2018", title:"« La République, c’est moi ! »",
+ text:"Des policiers perquisitionnent le siège de votre ancien mouvement. Les caméras sont là. Votre tension monte. Votre voix aussi.",
+ options:[
+  {t:"Pousser la porte en hurlant « La République, c’est moi ! »", e:{pop:-10,col:6,ass:-10}, r:"La vidéo passe en boucle à l’Assemblée, en cours d’éducation civique et dans les écoles de théâtre.", n:"« La République, c’est moi » : la vidéo étudiée au Conservatoire"},
+  {t:"« Ma personne est sacrée ! », version opéra", e:{pop:-8,col:4,ass:-6}, r:"Votre interprétation est saluée par l’Opéra de Paris. Beaucoup moins par le parquet.", n:"L’Opéra de Paris propose un CDI au Président"},
+  {t:"Ouvrir la porte et proposer un café", e:{pop:3}, r:"Les policiers repartent avec un café et un livre dédicacé. Personne ne vous reconnaît.", n:"Perquisition : « Il était très calme, c’était inquiétant », raconte un policier"}
+ ]},
+{who:"melenchon", src:"Promesse de 2012, 2017, 2022…", title:"La VIe République",
+ text:"Le moment est venu de tourner la page de la Ve République, « monarchie présidentielle ». Ironie : vous êtes le monarque.",
+ options:[
+  {t:"Convoquer une Assemblée constituante tirée au sort", e:{d:2,pop:-3,col:5,ass:-25}, r:"Les constituants tirés au sort comprennent trois notaires, un youtubeur gaming et un chat (inscrit par erreur).", n:"Constituante : le chat vote contre l’article 1er"},
+  {t:"Faire voter la VIe République par hologramme dans 12 villes", e:{d:1,pop:-2}, r:"L’hologramme bugue à Lille : vous apparaissez à l’envers. Le texte est adopté quand même.", n:"Hologramme : le Président apparaît la tête en bas à Lille"},
+  {t:"Garder la Ve : finalement, le 49.3, c’est pratique", e:{pop:-9,ass:10}, r:"Vous dégainez votre premier 49.3. Vos militants découvrent qu’ils ont voté pour un Jupiter qui crie plus fort.", n:"Premier 49.3 du Tribun : « C’est un 49.3 insoumis, ça n’a rien à voir »"}
+ ]},
+{who:"melenchon", src:"Promesse de 2017", title:"Plan A, plan B : les traités européens",
+ text:"Bruxelles retoque votre budget. Vous l’aviez toujours dit : « Plan A, on renégocie. Plan B, on désobéit. » Le moment est venu de choisir une lettre.",
+ options:[
+  {t:"Plan B : désobéir aux traités", e:{d:90,def:3,pop:-5,col:6}, r:"Les taux d’intérêt s’envolent. Berlin ressort les dossiers grecs de 2010 et change juste le nom du pays.", n:"Désobéissance européenne : les taux français dépassent ceux de la Grèce"},
+  {t:"Plan C : négocier en hurlant en espagnol", e:{d:20,pop:-3}, r:"Personne ne comprend, mais tout le monde est impressionné.", n:"Sommet européen : le Président français fait un discours de 4 h en espagnol"},
+  {t:"Plan A : rester poli", e:{pop:-6}, r:"Vous restez poli pendant toute la réunion. Ça vous fait physiquement mal.", n:"Bruxelles inquiète : le Président français a été « anormalement courtois »"}
+ ]},
+{who:"melenchon", src:"Promesse de 2022", title:"Nationaliser les autoroutes",
+ text:"Les sociétés d’autoroutes font des profits record. Vous voulez les récupérer. Le péage de Saint-Arnoult retient son souffle.",
+ options:[
+  {t:"Racheter les concessions (environ 50 Md€)", e:{d:50,pop:6}, r:"L’État récupère les autoroutes. Les aires de repos sont rebaptisées « Aires Jean-Jaurès ».", n:"Autoroutes nationalisées : les sandwiches triangle restent à 7,90 €"},
+  {t:"Les racheter ET rendre les péages gratuits", e:{d:50,def:2.5,pop:11,col:-6}, r:"Les Français partent en vacances gratuitement. Les bouchons, eux, sont collectivisés.", n:"Péages gratuits : 1 400 km de bouchon le premier samedi d’août"},
+  {t:"Nationaliser aussi les boulangeries et les PMU", e:{d:12,pop:-9,col:5}, r:"La baguette d’État arrive après un formulaire Cerfa. Elle est tiède et rassise.", n:"Boulangeries nationalisées : la tradition passe au format A4"}
+ ]},
+{who:"melenchon", src:"Obsession personnelle", title:"La France, puissance maritime",
+ text:"« La France possède le deuxième domaine maritime du monde ! » répétez-vous depuis quinze ans. Il est temps de passer aux actes.",
+ options:[
+  {t:"Lancer la conquête des abysses : 40 Md€ de sous-marins scientifiques", e:{d:40,pop:-2}, r:"Les sous-marins découvrent une nouvelle espèce de poisson. Elle est baptisée « Insoumis abyssus ».", n:"Abysses : découverte d’un poisson qui refuse de se soumettre"},
+  {t:"Déménager le ministère de l’Économie aux îles Kerguelen", e:{d:3,pop:-4,ass:-8}, r:"Le ministre arrive après trois semaines de bateau. Les manchots refusent de voter le budget.", n:"Kerguelen : le ministre de l’Économie négocie avec des manchots"},
+  {t:"Tenir un meeting sur un porte-avions", e:{d:0.8,pop:1}, r:"Votre voix porte jusqu’à Madagascar. Le porte-avions, lui, est en panne au milieu du discours.", n:"Meeting sur le porte-avions : 3 h 20 de discours, 2 mouettes conquises"}
+ ]},
+{who:"melenchon", src:"Promesse de 2012", title:"Le revenu maximum",
+ text:"Vous avez toujours voulu un « revenu maximum ». Reste à fixer le maximum. Vos conseillers proposent un chiffre. Vous en proposez un autre, plus bas.",
+ options:[
+  {t:"Taxer à 100 % au-delà de 400 000 € par an", e:{def:1,pop:4,col:-4}, r:"Footballeurs, rappeurs et trois PDG demandent l’asile fiscal en Belgique. Les recettes baissent. La SNCF ouvre une nouvelle ligne Paris–Bruxelles.", n:"Exode fiscal : la Belgique manque de logements de luxe"},
+  {t:"Taxer à 100 % au-delà de 4 000 € par mois", e:{def:3,pop:-15,col:12}, r:"Cadres, médecins et pilotes de ligne s’en vont. Les avions ne décollent plus. Pas grave : le kérosène est bloqué aussi.", n:"Revenu maximum : les médecins partent en Suisse en covoiturage"},
+  {t:"Taxer les yachts à 300 %", e:{def:-0.3,pop:5}, r:"Les yachts partent à Monaco. Les ports français redeviennent pittoresques.", n:"Taxe yacht à 300 % : Saint-Tropez retrouve ses pédalos"}
+ ]},
+{who:"melenchon", src:"Promesse de 2022", title:"La semaine de 32 heures",
+ text:"Vous voulez réduire le temps de travail. Le Medef a convoqué une réunion de crise. Elle dure 12 heures, sans pause.",
+ options:[
+  {t:"Passer à 32 heures payées 35", e:{def:4,pop:6,col:-5}, r:"Le vendredi devient le jour national du barbecue. Les entreprises s’adaptent en grognant.", n:"32 heures : le vendredi rebaptisé « samedi bis »"},
+  {t:"Passer à 4 jours… de 4 heures", e:{def:10,pop:2,ass:-20}, r:"La productivité s’effondre. La sieste devient sport national. Le PIB fait une crise existentielle.", n:"Semaine de 16 h : la France championne du monde de la sieste"},
+  {t:"Rester à 35 h, mais avec plus de pauses café", e:{pop:-4}, r:"Une réforme si timide que personne ne l’a remarquée. Sauf les machines à café.", n:"Réforme du temps de travail : les machines à café en surchauffe"}
+ ]},
+{who:"melenchon", src:"Remake de 2017", title:"Les hologrammes",
+ text:"En 2017, vous teniez des meetings en hologramme. Vos conseillers pensent qu’on peut aller beaucoup plus loin.",
+ options:[
+  {t:"Tenir 50 meetings simultanés en hologramme", e:{d:0.5,pop:-2}, r:"Cinquante Tribuns parlent en même temps. L’Arcom est saisie pour tapage nocturne.", n:"50 hologrammes présidentiels : les voisins portent plainte"},
+  {t:"Remplacer tout le gouvernement par des hologrammes", e:{d:4,pop:-5,ass:-15}, r:"Les ministres-hologrammes coûtent moins cher en salaires mais beaucoup plus en électricité. EDF dit merci.", n:"Gouvernement d’hologrammes : un ministre disparaît lors d’une coupure de courant"},
+  {t:"Rester en vrai, en chair et en colère", e:{pop:1}, r:"Les Français apprécient votre présence physique. Surtout la voix.", n:"Le Président apparaît en vrai : « Il est plus grand en hologramme »"}
+ ]},
+
+/* ======================= LE PEN ======================= */
+{who:"lepen", first:true, src:"Promesse de 2022", title:"La TVA sur l’énergie",
+ text:"Premier jour à l’Élysée. Vous avez promis de « rendre l’argent aux Français ». Bercy vous rappelle qu’en fait, il n’y en a pas. Vous répondez que c’est son problème à lui.",
+ options:[
+  {t:"Baisser la TVA sur l’énergie de 20 % à 5,5 %", e:{def:3,pop:8,col:-6}, r:"Le plein coûte un peu moins cher. Les Français roulent un peu plus. Le déficit aussi.", n:"TVA énergie : les stations-service prises d’assaut"},
+  {t:"TVA à 0 % sur les pâtes, le jambon, l’essence et les croquettes", e:{def:6,pop:5,col:-4}, r:"La France entière mange des pâtes au jambon en voiture. Le chat de l’Élysée prend deux kilos.", n:"TVA zéro : record historique de consommation de coquillettes-jambon"},
+  {t:"Augmenter la TVA… pour financer la baisse de la TVA", e:{pop:-12,col:8}, r:"Personne ne comprend ce montage. Vous non plus. Mais ça a l’air rigoureux.", n:"Bercy : « Ce montage fiscal est soit génial, soit illégal »"}
+ ]},
+{who:"lepen", src:"Promesse de 2022", title:"Les moins de 30 ans exonérés d’impôt",
+ text:"Vous aviez promis d’exonérer d’impôt sur le revenu les jeunes de moins de 30 ans. Jordan, 31 ans, trouve que la limite est mal placée.",
+ options:[
+  {t:"Exonérer les moins de 30 ans", e:{def:2,pop:4}, r:"Les jeunes adorent. Les 30 ans et un jour sont furieux.", n:"Impôt : vague de dépressions chez les trentenaires"},
+  {t:"Exonérer les moins de 50 ans (c’est à peu près pareil)", e:{def:12,pop:6,ass:-10}, r:"La moitié du pays ne paie plus d’impôt sur le revenu. L’autre moitié se teint les cheveux et triche sur son âge.", n:"Fraude à l’âge : des quinquagénaires en sweat à capuche devant les impôts"},
+  {t:"Exonérer uniquement les éleveurs de chats", e:{def:0.2,pop:-4}, r:"Mesure jugée « très ciblée » par le Conseil constitutionnel. Deux millions de Français se découvrent éleveurs de chats.", n:"Boom des élevages félins : « J’ai trois chats, donc zéro impôt »"}
+ ]},
+{who:"lepen", src:"Remake de 2017", title:"Frexit ? Non. Oui. Peut-être.",
+ text:"En 2017, vous vouliez sortir de l’euro. En 2022, plus du tout. Les marchés demandent une clarification. Vos conseillers aussi. Vous aussi, un peu.",
+ options:[
+  {t:"Sortir de l’euro et revenir au franc", e:{d:300,def:4,pop:-12,col:12}, r:"Le nouveau franc perd 30 % le premier jour. Les Français font des allers-retours en Belgique pour acheter du beurre. Les Suisses rigolent.", n:"Retour du franc : la baguette à 9,80 F, les Belges ravis"},
+  {t:"Une « monnaie commune » : l’euro pour les entreprises, le franc pour la baguette", e:{d:70,pop:-9,col:5}, r:"Une baguette coûte 1,20 € ou 7,80 F selon le jour. Les boulangers font des maths. Les maths gagnent.", n:"Double monnaie : les caissières demandent une prime de calcul mental"},
+  {t:"Ne plus jamais en parler", e:{pop:2}, r:"Le sujet disparaît. Comme le programme de 2017.", n:"Euro : le sujet officiellement « classé sans suite »"}
+ ]},
+{who:"lepen", src:"Inspiré de faits réels", title:"Jordan sur TikTok",
+ text:"Votre Premier ministre a des millions d’abonnés. Il propose de gouverner exclusivement par vidéos de 59 secondes.",
+ options:[
+  {t:"Le laisser annoncer le budget avec un filtre", e:{d:10,pop:3,ass:-12}, r:"Le budget est présenté en 59 secondes sur un son à la mode. Les chiffres défilent trop vite pour être lus. C’est voulu.", n:"Budget présenté sur TikTok : « J’ai rien compris mais c’était stylé »"},
+  {t:"Lui confier aussi le ministère des Finances", e:{def:3,pop:-5,ass:-10}, r:"Il demande à ses abonnés « comment faire un budget ». Le commentaire le plus liké : « imprimer des billets ».", n:"Bercy : le ministre suit un tutoriel « budget pour les nuls »"},
+  {t:"Lui interdire les réseaux sociaux", e:{pop:-6}, r:"Il fait une vidéo pour se plaindre de l’interdiction. 30 millions de vues.", n:"Interdit de TikTok, le Premier ministre fait un live pour protester"}
+ ]},
+{who:"lepen", src:"Inspiré de faits réels (éleveuse de chats)", title:"Les chats de l’Élysée",
+ text:"Vos chats ont pris possession du bureau présidentiel. L’un d’eux dort sur le bouton de la dissuasion nucléaire. Il faut une politique féline ambitieuse.",
+ options:[
+  {t:"Créer un ministère de la Condition féline", e:{d:1,pop:-3}, r:"Le ministère compte 400 agents et 1 200 chats. Les agents sont moins bien traités.", n:"Ministère des Chats : grève des agents, pas des chats"},
+  {t:"Chèque croquettes pour tous les foyers", e:{def:0.6,pop:3}, r:"Les chats de France votent pour vous en masse. Malheureusement, les humains aussi.", n:"Chèque croquettes : les chiens dénoncent une injustice"},
+  {t:"Nommer un chat Premier ministre", e:{pop:-6,ass:-25}, r:"Le chat dort pendant les questions au gouvernement, griffe un député et fait tomber un verre de la tribune. Il tient plus longtemps que trois de ses prédécesseurs.", n:"Matignon : le Premier ministre ronronne pendant la motion de censure"}
+ ]},
+{who:"lepen", src:"Remake de 2025", title:"La justice frappe à la porte",
+ text:"L’affaire des assistants parlementaires européens revient hanter le palais. Un juge pose des questions. Vous avez une idée : y répondre très fort, à la télévision.",
+ options:[
+  {t:"Dénoncer la « tyrannie des juges » au journal de 20 h", e:{pop:-6,col:8,ass:-15}, r:"Le Conseil supérieur de la magistrature publie un communiqué. Les juristes de France s’étouffent dans leur café.", n:"Magistrats : « On a l’habitude, on a déjà vu la saison 1 »"},
+  {t:"Tout rembourser… avec l’argent du contribuable", e:{d:0.01,pop:-8}, r:"Vous payez avec l’argent des Français. Les Français s’en aperçoivent.", n:"Remboursement : « techniquement, c’est vous qui avez payé », explique l’Élysée"},
+  {t:"Se faire réhabiliter par référendum", e:{d:0.25,pop:-5,ass:-10}, r:"Question posée : « Êtes-vous d’accord avec moi ? » Taux de participation : 11 %.", n:"Référendum : 89 % d’abstention, un record"}
+ ]},
+{who:"lepen", src:"Promesse de 2022 (RIC)", title:"Le référendum permanent",
+ text:"Vous aviez promis de redonner la parole au peuple. Le peuple, lui, n’avait rien demandé de précis.",
+ options:[
+  {t:"Un référendum par semaine sur tout (y compris la couleur des bancs)", e:{d:10,pop:-6,col:4}, r:"Les Français votent 52 fois par an. Participation au référendum n°34 sur l’heure d’hiver : 4 %.", n:"Référendum n°34 : l’heure d’hiver l’emporte avec 812 voix"},
+  {t:"Un référendum pour savoir s’il faut faire des référendums", e:{d:0.2,pop:-2}, r:"Résultat : 50,01 % pour. Un nouveau référendum est demandé pour savoir si le résultat compte.", n:"Méta-référendum : la France vote pour savoir si elle a voté"},
+  {t:"Pas de référendum, finalement le Parlement c’est très bien", e:{pop:-5,ass:8}, r:"Vos électeurs découvrent que vous aimez le Parlement. Choc.", n:"La Présidente défend le Parlement : les députés sous le choc"}
+ ]},
+{who:"lepen", src:"Remake de 2014", title:"Le prêt d’une banque étrangère",
+ text:"Les grandes banques boudent les obligations françaises. Une petite banque d’Europe de l’Est, au nom imprononçable, propose de financer le Trésor. Le taux ? « On en reparlera. »",
+ options:[
+  {t:"Accepter : 50 Md€ à 9 %", e:{d:50,def:1.1,pop:-8,ass:-15}, r:"La France est désormais financée par une banque dont le siège est un appartement au 4e étage sans ascenseur.", n:"Dette française : le nouveau créancier n’a pas de site internet"},
+  {t:"Refuser et lancer un « Emprunt Patriote » auprès des Français", e:{d:30,pop:3}, r:"Les Français prêtent leur Livret A à l’État. L’État leur rend des bons du Trésor avec votre photo dessus.", n:"Emprunt Patriote : 30 Md€ levés, dont 4 en pièces jaunes"},
+  {t:"Emprunter à vos chats (ils ont des économies)", e:{pop:-2}, r:"Les chats acceptent contre trois tonnes de croquettes. C’est le meilleur taux du marché.", n:"Finance : les chats de l’Élysée meilleurs gestionnaires que Bercy"}
+ ]},
+{who:"lepen", src:"Promesse de 2022", title:"Retraites : promesse ou réalité ?",
+ text:"Vous aviez promis la retraite à 60 ans pour les carrières longues. Les carrières longues, elles, s’en souviennent très bien.",
+ options:[
+  {t:"Retraite à 60 ans pour les carrières longues", e:{def:3,pop:6,col:-6}, r:"Promesse tenue. Les électeurs n’en reviennent pas. Bercy non plus.", n:"Retraites : une promesse de campagne tenue, les politologues sidérés"},
+  {t:"Retraite à 62 ans pour tout le monde", e:{def:5,pop:5,col:-8,ass:-10}, r:"Retour à 2010. Les marchés regardent la France comme on regarde un ex qui rappelle à 2 h du matin.", n:"Retraite à 62 ans : « Retour vers le futur », titre la presse"},
+  {t:"Finalement 64 ans, « il faut être responsable »", e:{def:-1,pop:-13,col:12}, r:"Vos électeurs entendent le mot « responsable » dans votre bouche pour la première fois. Ils changent de chaîne.", n:"Retraites : la Présidente découvre la rigueur, ses électeurs découvrent la colère"}
+ ]},
+{who:"lepen", src:"Promesse de 2022", title:"Privatiser l’audiovisuel public",
+ text:"Vous trouvez que l’audiovisuel public coûte cher et ne vous aime pas assez. Deux défauts majeurs.",
+ options:[
+  {t:"Privatiser France Télévisions et Radio France", e:{d:-3,pop:-6,col:7}, r:"Les chaînes sont rachetées par un milliardaire qui remplace le JT par du télé-achat.", n:"Audiovisuel privatisé : le JT de 20 h remplacé par une vente de casseroles"},
+  {t:"Vendre les feuilletons du service public à une plateforme américaine", e:{d:-0.2,pop:-3}, r:"Les feuilletons français sont doublés en anglais avec l’accent texan. C’est un succès aux États-Unis.", n:"Les séries françaises cartonnent au Texas"},
+  {t:"Créer une chaîne d’État qui diffuse vos discours et des vidéos de chats", e:{d:1.5,pop:-7}, r:"Audience : excellente pour les chats, catastrophique pour les discours.", n:"La chaîne présidentielle : 98 % de l’audience pendant les vidéos de chats"}
+ ]},
+{who:"lepen", src:"Programme", title:"Le protectionnisme « intelligent »",
+ text:"Vous voulez protéger l’économie française. Vos conseillers ont préparé une liste de produits étrangers à taxer. Elle fait 400 pages et inclut le café.",
+ options:[
+  {t:"Droits de douane de 30 % sur toutes les importations", e:{def:2,pop:2,col:8}, r:"Les smartphones coûtent 2 400 €. Les Français ressortent leurs vieux téléphones à clapet. Inflation à 9 %.", n:"Protectionnisme : retour en force du téléphone à clapet"},
+  {t:"Interdire les fraises espagnoles", e:{pop:3,col:3}, r:"Madrid interdit le camembert. L’escalade est lancée : c’est la guerre de la fraise.", n:"Guerre de la fraise : l’Espagne riposte sur le camembert"},
+  {t:"Obliger tous les ministres à rouler en voiture française", e:{d:0.2,pop:1}, r:"Les ministres arrivent en retard au Conseil, coincés derrière une voiture sans permis.", n:"Conseil des ministres retardé : embouteillage de voitures françaises"}
+ ]},
+
+/* ======================= COMMUNES ======================= */
+{who:"all", src:"Remake de 2018", title:"La taxe carbone sur le gazole",
+ text:"Bercy a une idée pour sauver la planète et le budget : augmenter le prix du gazole. Les ronds-points de France retiennent leur souffle.",
+ options:[
+  {t:"+10 centimes le litre, pour la planète", e:{def:-1.5,pop:-8,col:18}, manif:"gj", r:"Des millions de gilets jaunes sortent des coffres de voiture. Les ronds-points redeviennent des lieux de vie.", n:"Carburant : « la fin du mois avant la fin du monde » fait son grand retour"},
+  {t:"Annuler la hausse et verser une « prime carburant » de 100 €", e:{d:5,def:0.5,pop:3,col:-5}, r:"Les Français touchent 100 € et les dépensent en gazole. La planète, elle, ne touche rien.", n:"Prime carburant : 100 € pour tout le monde, 0 € pour la planète"},
+  {t:"Taxer aussi les vélos, les trottinettes et la marche à pied", e:{def:-0.2,pop:-12,col:12}, r:"Une taxe sur les semelles est créée. Les Français marchent pieds nus en signe de protestation.", n:"Taxe sur les semelles : les cordonniers entrent en résistance"}
+ ]},
+{who:"all", src:"Remake de 2025", title:"Supprimer deux jours fériés",
+ text:"Bercy a calculé qu’en travaillant deux jours de plus, la France gagnerait quelques milliards. Il faut choisir lesquels sacrifier.",
+ options:[
+  {t:"Supprimer le lundi de Pâques et le 8 mai", e:{def:-1,pop:-12,col:12}, r:"Les anciens combattants et les chocolatiers manifestent ensemble. Une alliance inédite.", n:"Jours fériés : alliance historique entre chocolatiers et anciens combattants"},
+  {t:"Supprimer le 14 juillet (trop cher en feux d’artifice)", e:{def:-0.3,pop:-16,col:14}, r:"Pour la première fois depuis 1880, pas de défilé. Les Français descendent quand même sur les Champs-Élysées, mais pour manifester.", n:"Pas de 14 juillet : les pompiers organisent quand même leur bal, par résistance"},
+  {t:"Créer un jour férié : la Saint-Fromage", e:{def:1,pop:6,col:-4}, r:"Le premier jeudi de mars est désormais férié. Le comté remercie la Nation.", n:"Saint-Fromage : 67 millions de Français fêtent le camembert"}
+ ]},
+{who:"all", src:"Remake de 2025", title:"La taxe Zucman",
+ text:"Un économiste propose de taxer à 2 % les patrimoines de plus de 100 millions d’euros. Environ 1 800 foyers sont concernés. Les plateaux télé s’enflamment comme s’il s’agissait de toute la France.",
+ options:[
+  {t:"Adopter la taxe à 2 %", e:{def:-3.5,pop:6,col:-6}, r:"Trois milliardaires annoncent leur départ en Belgique (comme en 2012, 2017 et 2022). Aucun ne part.", n:"Taxe sur les ultra-riches : les déménageurs belges attendent toujours"},
+  {t:"Refuser : « les milliardaires sont une espèce fragile »", e:{pop:-7,col:9}, r:"Vous créez une réserve naturelle pour milliardaires. Elle est située à Saint-Tropez.", n:"Le gouvernement classe les milliardaires « espèce protégée »"},
+  {t:"Créer un bouclier fiscal en or massif", e:{def:2,pop:-12,col:10}, r:"Le bouclier est exposé à Bercy. Il est volé le lendemain avec un monte-meubles.", n:"Bercy : le bouclier fiscal en or a disparu"}
+ ]},
+{who:"all", src:"Remake de 2024", title:"Les tracteurs sur le périph’",
+ text:"Les agriculteurs bloquent les autoroutes autour de Paris. Ils réclament moins de normes, plus de revenus, et que quelqu’un, quelque part, comprenne enfin la PAC.",
+ options:[
+  {t:"Céder sur tout : gazole agricole, normes, subventions", e:{d:2,def:1,pop:4,col:-8}, r:"Les tracteurs rentrent à la ferme. Bruxelles fait les gros yeux. Les agriculteurs aussi, par habitude.", n:"Agriculteurs : levée des blocages, « jusqu’à la prochaine fois »"},
+  {t:"Envoyer les CRS face aux tracteurs", e:{col:8,pop:-2}, manif:"agri", r:"Vous envoyez les CRS. Les agriculteurs sortent le lisier.", n:"Face-à-face tendu entre CRS et tracteurs sur l’A6"},
+  {t:"Aller au Salon de l’Agriculture tapoter une vache", e:{pop:-3,col:6}, r:"La vache vous écrase le pied. Les agriculteurs applaudissent la vache.", n:"Salon de l’Agriculture : la vache plus applaudie que le chef de l’État"}
+ ]},
+{who:"all", src:"Remake de 2025", title:"Les agences de notation s’impatientent",
+ text:"Moody’s, S&P et Fitch « observent la France avec attention ». C’est la phrase qu’emploient les banquiers juste avant de vous dégrader.",
+ options:[
+  {t:"Promettre des économies que vous ne ferez jamais", e:{pop:-2}, r:"Les agences notent votre promesse. Elles notent aussi qu’elles l’ont déjà entendue quatorze fois.", n:"Promesse d’économies n°15 : les agences de notation baillent"},
+  {t:"Les insulter au journal de 20 h", e:{d:20,pop:3,col:-2}, r:"Le spread français s’envole. L’Italie emprunte moins cher que la France. Rome envoie ses condoléances.", n:"Les taux français dépassent ceux de l’Italie : Rome envoie des fleurs"},
+  {t:"Inviter les analystes dans une brasserie chic des Champs-Élysées", e:{d:0.01,pop:-6}, r:"La soirée se termine à 3 h du matin. La note est maintenue. L’addition aussi.", n:"Dîner avec les agences de notation : « une soirée AAA »"}
+ ]},
+{who:"all", src:"Remake de 2024", title:"Se baigner dans la Seine",
+ text:"Après plus d’un milliard d’euros de travaux, la Seine est déclarée « baignable » (certains jours, si le vent est favorable et qu’il n’a pas plu). Les caméras attendent un plongeon présidentiel.",
+ options:[
+  {t:"Plonger en direct devant les caméras", e:{pop:3}, r:"Vous plongez avec panache. Les Français trouvent ça courageux. Votre popularité monte. Zut.", n:"Plongeon présidentiel dans la Seine : 12 millions de téléspectateurs",
+   alt:{p:0.6, e:{pop:-5,col:2}, r:"Vous plongez. Trois jours de gastro. La photo de vous, verdâtre, sortant de la Seine fait la une de la presse mondiale.", n:"Gastro présidentielle : la photo du plongeon fait le tour du monde"}},
+  {t:"Lancer un plan « Seine 2 » à 3 Md€ pour que ce soit vraiment propre", e:{d:3,pop:1}, r:"La Seine devient si propre qu’on y retrouve des poissons. Ils demandent à repartir.", n:"Plan Seine 2 : des poissons signalés, l’un d’eux porte plainte"},
+  {t:"Envoyer un ministre plonger à votre place", e:{pop:-2,ass:-5}, r:"Le ministre plonge. Il ressort avec une trottinette électrique et une otite.", n:"Le ministre ressort de la Seine avec une trottinette"}
+ ]},
+{who:"all", src:"Remake de 2022", title:"Pénurie de moutarde",
+ text:"Les rayons sont vides. Plus de moutarde de Dijon depuis trois semaines. La France est au bord de l’implosion gastronomique.",
+ options:[
+  {t:"Nationaliser la moutarde de Dijon", e:{d:1.2,pop:2}, r:"La moutarde d’État arrive en pots tricolores. Elle monte au nez, comme le budget.", n:"La moutarde nationalisée : « Ça nous monte au nez », reconnaît Bercy"},
+  {t:"Importer 40 000 tonnes de moutarde américaine sucrée", e:{pop:-7,col:4}, r:"Une moutarde jaune fluo envahit les rayons. Les Bourguignons entrent en résistance.", n:"Moutarde américaine : la Bourgogne au bord de la sécession"},
+  {t:"Créer un Haut-Commissariat à la Moutarde (avec voiture de fonction)", e:{d:0.1,pop:-3}, r:"Le Haut-Commissaire produit un rapport de 300 pages. Toujours pas de moutarde.", n:"Haut-Commissariat à la Moutarde : un rapport, zéro pot"}
+ ]},
+{who:"all", src:"Remake de 2023", title:"Panique aux punaises de lit",
+ text:"Des punaises de lit sont signalées dans le métro, les cinémas et les TGV. Paris est en état d’alerte. Les Français dorment debout.",
+ options:[
+  {t:"Plan Marshall anti-punaises : 2 Md€", e:{d:2,pop:2}, r:"Des chiens renifleurs sont déployés dans tout le pays. Les punaises déménagent en Belgique.", n:"Punaises : la Belgique dénonce une « migration organisée »"},
+  {t:"Déclarer que c’est une opération de désinformation étrangère", e:{pop:-3,col:3}, r:"Les punaises, elles, ne lisent pas les communiqués. Elles continuent.", n:"Le gouvernement accuse les punaises d’ingérence étrangère"},
+  {t:"Réunir un Conseil de défense « punaises » dans le bunker de l’Élysée", e:{d:0.05,pop:-2}, r:"On découvre des punaises dans le bunker. Le Conseil de défense est évacué.", n:"Bunker de l’Élysée évacué : les punaises gagnent la bataille"}
+ ]},
+{who:"all", src:"Remake d’octobre 2025", title:"Casse du siècle au Louvre",
+ text:"Des voleurs ont dérobé des bijoux de la Couronne en quelques minutes, avec un monte-meubles, en plein jour. Le monde entier rigole. Les assureurs, moins.",
+ options:[
+  {t:"Racheter des bijoux neufs place Vendôme", e:{d:0.1,pop:-5}, r:"Les nouveaux bijoux sont magnifiques et très chers. Ils sont volés trois semaines plus tard, avec le même monte-meubles.", n:"Louvre : les nouveaux bijoux volés, le monte-meubles « reconnu sur les images »"},
+  {t:"Doubler la sécurité de tous les musées : 10 000 vigiles", e:{d:1,def:0.1,pop:1}, r:"Il y a désormais plus de vigiles que de visiteurs au musée de la Chasse et de la Nature.", n:"Musées : un vigile par tableau, deux pour la Joconde"},
+  {t:"Vendre la Joconde à un fonds souverain pour éponger la dette", e:{d:-30,pop:-20,col:14}, r:"Elle part pour 30 Md€. Elle sourit encore moins. La dette baisse… de l’équivalent de deux mois de déficit.", n:"La Joconde vendue : « Elle avait l’air soulagée », selon un gardien"}
+ ]},
+{who:"all", src:"Remake de 2025", title:"Droits de douane américains",
+ text:"Washington impose 50 % de droits de douane sur le vin, le fromage et les sacs de luxe français. Le comté est en état de choc.",
+ options:[
+  {t:"Riposter : 50 % sur les sodas, les burgers et les séries", e:{def:1,pop:5,col:3}, r:"Les Français redécouvrent la limonade et les séries belges. Moral en hausse. Mauvais signe pour vous.", n:"Guerre commerciale : les Français redécouvrent la limonade"},
+  {t:"Offrir au président américain une Tour Eiffel miniature en or", e:{d:0.5,pop:-6}, r:"Il adore. Il augmente les droits de douane à 70 % « pour en avoir une deuxième ».", n:"Tour Eiffel en or offerte : les droits de douane passent à 70 %"},
+  {t:"Subventionner les viticulteurs : 3 Md€", e:{d:3,def:0.3,pop:3}, r:"Les viticulteurs boivent leur stock à votre santé. Littéralement.", n:"Viticulture : 3 milliards et beaucoup de bouteilles ouvertes"}
+ ]},
+{who:"all", src:"Remake de 2019 et 2022", title:"Grève SNCF à Noël",
+ text:"Les contrôleurs menacent de faire grève pendant les fêtes. 8 millions de Français risquent de passer Noël sans leur belle-mère. Certains sont ravis.",
+ options:[
+  {t:"Céder : prime de Noël pour les contrôleurs", e:{d:0.8,pop:-2,col:-3}, r:"Les trains roulent. Les autres fonctionnaires demandent immédiatement la même chose.", n:"SNCF : la grève est levée, les aiguilleurs du ciel prennent le relais"},
+  {t:"Réquisitionner les cheminots", e:{pop:-6,col:10,ass:-5}, r:"Les cheminots réquisitionnés conduisent les trains… à 30 km/h, en chantant l’Internationale.", n:"Réquisition : le TGV Paris–Marseille met 11 heures"},
+  {t:"Remplacer les TGV par des autocars low-cost", e:{pop:-3,col:3}, r:"Paris–Nice en 14 heures, avec escale à Clermont-Ferrand. Joyeux Noël.", n:"Autocars de Noël : un passager arrive pour le Nouvel An"}
+ ]},
+{who:"all", src:"Remake permanent", title:"L’hôpital craque",
+ text:"Les urgences débordent, les soignants démissionnent, et un patient attend depuis tellement longtemps qu’il a été élu délégué du couloir.",
+ options:[
+  {t:"Ségur de la santé n°2 : +10 Md€", e:{d:3,def:2.5,pop:6,col:-6}, r:"Les soignants sont augmentés. Ils ont enfin le temps de déjeuner (debout).", n:"Ségur 2 : les infirmières reçoivent leur prime, et une chaise"},
+  {t:"Fermer les urgences la nuit", e:{def:-0.5,pop:-12,col:12}, r:"Il est désormais conseillé de tomber malade entre 9 h et 17 h, hors week-ends et jours fériés.", n:"Urgences : « Merci de rappeler aux heures ouvrables »"},
+  {t:"Remplacer les médecins par une IA qui répond « buvez de l’eau »", e:{d:2,pop:-8,col:5}, r:"L’IA diagnostique une jambe cassée comme « fatigue passagère ». Elle est nommée cheffe de service.", n:"Santé : l’IA « Docteur Doliprane » déployée dans 300 hôpitaux"}
+ ]},
+{who:"all", src:"Remake permanent", title:"Réforme de l’école n°43",
+ text:"Le niveau baisse, disent les études. Le nombre de ministres de l’Éducation, lui, monte. Il faut agir.",
+ options:[
+  {t:"Uniforme obligatoire dans toutes les écoles", e:{d:1.5,pop:2}, r:"Les élèves portent l’uniforme. Le niveau ne change pas, mais les photos de classe sont plus jolies.", n:"Uniforme : les photos de classe en net progrès"},
+  {t:"Supprimer les vacances d’été pour « rattraper le niveau »", e:{def:-0.5,pop:-15,col:15}, manif:"profs", r:"Les profs, les parents, les élèves, les campings et les vendeurs de glaces manifestent ensemble.", n:"Plus de grandes vacances : les marchands de glaces descendent dans la rue"},
+  {t:"Nommer le sixième ministre de l’Éducation de l’année", e:{pop:-3,ass:-6}, r:"Le nouveau ministre annonce une grande réforme. Il est remplacé avant de l’avoir écrite.", n:"Éducation : le ministre remplacé pendant son discours de passation"}
+ ]},
+{who:"all", src:"🔮 Futur possible", title:"L’emprunt du siècle",
+ text:"Bercy propose un grand emprunt pour « investir dans l’avenir ». L’avenir est flou. L’emprunt, lui, est très concret.",
+ options:[
+  {t:"Emprunter 200 Md€ pour « investir dans l’avenir »", e:{d:200,def:1,pop:2}, r:"Les 200 Md€ financent 1 200 comités Théodule et 400 rapports sur l’avenir. L’avenir est très bien documenté.", n:"Grand emprunt : l’avenir financé, mais personne ne sait lequel"},
+  {t:"Émettre une obligation perpétuelle à 6 %", e:{d:80,def:1.2,pop:-3}, r:"Vos arrière-arrière-petits-enfants paieront. Heureusement, ils ne votent pas encore.", n:"Dette perpétuelle : « Nos descendants vont adorer », plaisante Bercy"},
+  {t:"Lancer une cagnotte en ligne « Sauvons la France »", e:{d:0.003,pop:-5}, r:"La cagnotte récolte 2,7 M€, dont 2 M€ d’un milliardaire qui demande un ministère en échange.", n:"Cagnotte nationale : 2,7 millions récoltés, soit 4 minutes de déficit"}
+ ]},
+{who:"all", src:"Remake de 2019", title:"Les dîners du ministre",
+ text:"Un média révèle que votre ministre de l’Écologie organisait des dîners au homard géant et aux grands crus, aux frais de la République.",
+ options:[
+  {t:"Le soutenir : « Le homard, c’est aussi la biodiversité »", e:{pop:-7,col:4}, r:"La phrase devient culte. Les homards, eux, ne la trouvent pas drôle.", n:"« Le homard, c’est la biodiversité » : la SPA des crustacés s’indigne"},
+  {t:"Instaurer le « chèque homard » pour tous les Français", e:{def:2,pop:5}, r:"Chaque foyer reçoit un homard. La Bretagne est en rupture de stock. Les Français sont ravis. Dommage.", n:"Chèque homard : la Bretagne en pénurie de crustacés"},
+  {t:"Interdire le homard dans les ministères", e:{pop:1}, r:"Les ministres passent à la langouste. Personne ne remarque la différence.", n:"Homard interdit : les ministres se rabattent sur la langouste"}
+ ]},
+{who:"all", src:"🔮 Futur très probable", title:"Canicule de juillet",
+ text:"Il fait 46 °C à Paris. Les écoles sont des fours, les trains déraillent de chaleur, et l’Assemblée siège en tongs.",
+ options:[
+  {t:"Climatiser toutes les écoles : 20 Md€", e:{d:20,pop:3}, r:"Les écoles deviennent les endroits les plus frais de France. Les parents demandent à y dormir.", n:"Écoles climatisées : les parents veulent s’inscrire en CM2"},
+  {t:"Distribuer un ventilateur USB à chaque Français", e:{d:0.2,pop:-6,col:5}, r:"Le ventilateur souffle de l’air chaud avec un petit bruit. Il est rebaptisé « le gouvernement ».", n:"Ventilateurs USB : « Ça brasse du vent, comme à Matignon »"},
+  {t:"Décaler l’été au mois de novembre par décret", e:{pop:-3,ass:-5}, r:"Le Conseil d’État valide le décret. Le soleil, lui, ne l’a pas lu.", n:"L’été décalé par décret : le soleil n’a pas été consulté"}
+ ]},
+{who:"all", src:"Remake de 2022", title:"Crise de l’énergie",
+ text:"Le prix de l’électricité est multiplié par trois. Les boulangers éteignent leurs fours, les patinoires ferment et les Français dorment avec trois couettes.",
+ options:[
+  {t:"Bouclier tarifaire XXL", e:{d:40,def:2,pop:5,col:-10}, r:"Les factures sont gelées. Le déficit, lui, est en ébullition.", n:"Bouclier tarifaire : 40 milliards pour que les Français n’aient pas froid"},
+  {t:"Conseiller aux Français de porter un col roulé", e:{pop:-6,col:5}, r:"Le col roulé devient le symbole national de la résistance… au froid.", n:"Col roulé : les ventes explosent, la popularité s’effondre"},
+  {t:"Laisser les prix exploser : « c’est le marché »", e:{pop:-12,col:15}, r:"Le marché est très content. Les Français, moins.", n:"Électricité : les factures dépassent le prix d’un loyer"}
+ ]},
+{who:"all", src:"Remake de 2024", title:"Bruxelles hausse le ton",
+ text:"La Commission européenne ouvre une procédure pour déficit excessif contre la France. Un commissaire néerlandais soupire si fort qu’on l’entend depuis Paris.",
+ options:[
+  {t:"Promettre 3 % de déficit « en 2034 au plus tard »", e:{pop:-1}, r:"Bruxelles prend note. Elle a un tiroir spécial pour les promesses françaises. Il déborde.", n:"Bruxelles : le tiroir des promesses françaises ne ferme plus"},
+  {t:"Répondre par une lettre d’insultes en alexandrins", e:{d:15,pop:4,col:-2}, r:"La lettre est magnifique, elle est étudiée au bac de français. Les taux d’intérêt montent quand même.", n:"Lettre à Bruxelles en alexandrins : « Du Racine budgétaire »"},
+  {t:"Proposer de payer l’amende en fromage", e:{d:1,pop:2}, r:"Bruxelles accepte 40 tonnes de roquefort. Le commissaire néerlandais est hospitalisé.", n:"Amende payée en roquefort : la Commission évacuée"}
+ ]},
+{who:"all", src:"🔮 Futur possible", title:"La Tour Eiffel à vendre ?",
+ text:"Bercy a fait l’inventaire des « actifs valorisables » de l’État. En tête de liste : un monument de 330 mètres.",
+ options:[
+  {t:"La vendre à un émirat pour 25 Md€", e:{d:-25,pop:-18,col:12}, r:"La Tour Eiffel est démontée et remontée dans le désert. Paris installe une grue à la place, pour faire illusion.", n:"Tour Eiffel vendue : les touristes photographient la grue"},
+  {t:"La louer à un milliardaire de la tech qui la rebaptise « Tour X »", e:{d:-2,pop:-10,col:6}, r:"Un logo géant clignote au sommet. Les Parisiens tournent le dos en permanence.", n:"« Tour X » : les Parisiens refusent de lever les yeux"},
+  {t:"La repeindre en or pour le prestige", e:{d:1.5,pop:-3}, r:"Elle brille tellement que les avions de Roissy changent de trajectoire.", n:"Tour Eiffel dorée : Air France modifie ses couloirs aériens"}
+ ]},
+{who:"all", src:"🔮 Futur imminent", title:"La baguette à 2 €",
+ text:"Le prix de la baguette tradition franchit la barre symbolique des 2 €. Une émeute éclate dans une boulangerie de Clermont-Ferrand.",
+ options:[
+  {t:"Baguette subventionnée à 1 €", e:{def:0.5,pop:5,col:-4}, r:"Les Français achètent quatre baguettes par jour, juste pour le plaisir.", n:"Baguette à 1 € : record de consommation, les miettes partout"},
+  {t:"Taxer la baguette pour financer la dette", e:{def:-0.3,pop:-14,col:14}, r:"La baguette à 2,60 €. La Révolution de 1789 a commencé pour moins que ça.", n:"Taxe baguette : les historiens rappellent l’affaire de 1789"},
+  {t:"Lancer une baguette « Premium » à 4 € pour les ministres", e:{pop:-4,col:4}, r:"Elle est dorée à la feuille d’or. Personne ne veut la manger, tout le monde veut la jeter.", n:"Baguette Premium à 4 € : « Elle a un goût de mépris »"}
+ ]},
+{who:"all", src:"Remake de septembre 2025", title:"« Bloquons tout » : le retour",
+ text:"Un appel anonyme sur les réseaux sociaux propose de « tout bloquer » le 10 du mois. Personne ne sait qui l’a lancé, mais tout le monde a déjà sorti son gilet.",
+ options:[
+  {t:"Attendre de voir ce qui se passe", e:{col:5}, manif:"bloquons", r:"Ce qui se passe, c’est que tout est bloqué.", n:"« Bloquons tout » : tout est bloqué, confirme la préfecture"},
+  {t:"Annoncer des mesures sociales pour désamorcer", e:{def:2,pop:3,col:-12}, r:"Le mouvement se dégonfle. Les gilets retournent dans les coffres. Pour l’instant.", n:"Mesures sociales : le mouvement « Bloquons tout » se débloque"},
+  {t:"Accuser les algorithmes et les influenceurs", e:{pop:-3,col:6}, manif:"bloquons", r:"Les influenceurs se sentent visés et rejoignent le mouvement. Avec leurs 40 millions d’abonnés.", n:"Les influenceurs rejoignent « Bloquons tout » en direct"}
+ ]},
+{who:"all", src:"Remake de 2019", title:"Vendre les bijoux de famille",
+ text:"Bercy propose de privatiser quelques entreprises publiques pour renflouer les caisses. On a déjà essayé de vendre les autoroutes, ça s’est très bien passé (pour les acheteurs).",
+ options:[
+  {t:"Privatiser les Aéroports de Paris et la Française des Jeux", e:{d:-12,pop:-6,col:5}, r:"Les acheteurs font une affaire en or. L’État, une affaire en plomb.", n:"Privatisations : les acheteurs « remercient chaleureusement l’État »"},
+  {t:"Privatiser les toilettes publiques", e:{d:-0.5,pop:-5}, r:"Le pipi passe à 2 €. Les Parisiens découvrent l’économie de marché.", n:"Toilettes privatisées : les arbres parisiens en danger"},
+  {t:"Au contraire, nationaliser tout ce qui bouge", e:{d:30,pop:2,ass:-10}, r:"L’État rachète une chaîne de pizzerias, deux clubs de foot et un fabricant de trottinettes.", n:"L’État devient actionnaire d’une pizzeria de Montluçon"}
+ ]},
+{who:"all", src:"🔮 Futur possible", title:"Le nouvel avion présidentiel",
+ text:"L’avion présidentiel a 17 ans. Il a une fuite dans les toilettes et le Wi-Fi ne marche qu’au-dessus de la Belgique.",
+ options:[
+  {t:"Commander un « Air Force Un » à 600 M€", e:{d:0.6,pop:-7}, r:"L’avion a un salon, une salle de sport et une salle de presse insonorisée, pour ne pas entendre les questions.", n:"Air Force Un : 600 millions et une salle anti-questions"},
+  {t:"Voyager en low-cost avec bagage cabine", e:{pop:4}, r:"Vous payez 45 € de supplément pour la valise du chef du protocole. Les Français adorent. Mauvaise nouvelle.", n:"Le chef de l’État en low-cost : « Il a payé son siège au hublot »"},
+  {t:"Un avion avec piscine, pour faire Brégançon en plein vol", e:{d:1,pop:-10}, r:"La piscine se vide au premier trou d’air sur la tête des passagers de la classe éco.", n:"Avion présidentiel à piscine : premier vol, première inondation"}
+ ]},
+{who:"all", src:"🔮 Futur possible", title:"L’IA dans l’administration",
+ text:"Un cabinet de conseil (facturé 4 M€) recommande de remplacer une partie de l’administration par de l’intelligence artificielle.",
+ options:[
+  {t:"Remplacer 100 000 fonctionnaires par une IA", e:{d:8,def:-1,pop:-9,col:12}, manif:"fonctionnaires", r:"L’IA traite les dossiers en 3 secondes, tous refusés. Les fonctionnaires descendent dans la rue, avec le formulaire réglementaire.", n:"IA administrative : 100 % des dossiers refusés en un temps record"},
+  {t:"Créer « ChatBleu-Blanc-Rouge » : 15 Md€", e:{d:15,pop:-2}, r:"L’IA nationale répond à toutes les questions : « Veuillez remplir le formulaire Cerfa n°12485*03. »", n:"ChatBleu-Blanc-Rouge : « Votre demande est irrecevable », répond l’IA"},
+  {t:"Interdire l’IA aux ministres", e:{pop:2}, r:"Les ministres doivent écrire leurs discours eux-mêmes. Le niveau baisse, la sincérité monte.", n:"Interdits d’IA, les ministres découvrent la page blanche"}
+ ]},
+{who:"all", src:"🔮 Futur proche", title:"Les JO d’hiver 2030",
+ text:"Les Alpes françaises accueillent les Jeux d’hiver en 2030. Problème : il n’y a plus beaucoup de neige. Et le budget fond plus vite que les glaciers.",
+ options:[
+  {t:"Garantir le budget, même s’il triple", e:{d:6,pop:-2}, r:"Le budget triple. Les organisateurs disent que c’est « dans la moyenne olympique ».", n:"JO 2030 : le budget triple, « c’est la tradition »"},
+  {t:"Fabriquer de la neige artificielle sur toutes les Alpes", e:{d:3,pop:-6,col:3}, r:"Les canons à neige consomment autant qu’une petite ville. Les écologistes descendent en luge manifester.", n:"Neige artificielle : manifestation de lugeurs écolos à Chambéry"},
+  {t:"Délocaliser les épreuves de ski à Dubaï", e:{d:1,pop:-8}, r:"Le slalom a lieu dans un centre commercial climatisé. Les Savoyards ne vous le pardonneront jamais.", n:"JO d’hiver : la descente se déroulera entre une boutique de montres et un McDo"}
+ ]},
+{who:"all", src:"Remake de 2018", title:"La Fête de la musique à l’Élysée",
+ text:"Le 21 juin approche. Votre équipe propose d’ouvrir la cour de l’Élysée à un DJ électro très à la mode. Les photos risquent d’être… mémorables.",
+ options:[
+  {t:"Organiser une soirée électro géante dans la cour de l’Élysée", e:{d:0.4,pop:-6,col:4}, r:"Le DJ mixe jusqu’à 2 h du matin et vous dansez sur le perron. Les photos font le tour des réseaux. La moitié du pays trouve ça « gênant », l’autre moitié « très gênant ».", n:"Fête de la musique : le perron de l’Élysée transformé en boîte de nuit"},
+  {t:"Monter sur scène et chanter vous-même (faux)", e:{pop:-8,col:3}, r:"Vous chantez « Douce France » avec deux tons d’écart. Les chiens du quartier hurlent à l’unisson.", n:"Le chef de l’État chante faux en direct : les chiens du 8e arrondissement en émoi"},
+  {t:"Rester travailler au bureau avec des boules Quies", e:{pop:2}, r:"Vous travaillez toute la nuit. Les Français apprécient ce sérieux. Mauvais pour vous.", n:"Fête de la musique : le chef de l’État reste travailler, les Français attendris"}
+ ]},
+{who:"all", src:"Remake de 2020 et 2022", title:"Les vacances d’été à l’Élysée",
+ text:"Le pays est en pleine crise (comme d’habitude). Votre agenda prévoit trois semaines de « travail à distance » au bord de la mer.",
+ options:[
+  {t:"Faire du jet-ski devant les photographes", e:{pop:-8,col:5}, r:"Vous faites des allers-retours en jet-ski pendant trois heures. Les paparazzis repartent avec 4 000 photos. Le pays repart avec une colère toute neuve.", n:"Jet-ski présidentiel : les photos de l’été font polémique"},
+  {t:"Vacances au camping, « comme tout le monde »", e:{pop:4,col:-3}, r:"Vous dormez sous une tente au camping des Flots Bleus. Les voisins vous prêtent leur barbecue. Votre popularité remonte. Raté.", n:"Le chef de l’État au camping : « Il a ramené du rosé », raconte un voisin"},
+  {t:"Croisière sur le yacht d’un milliardaire", e:{d:0.01,pop:-12,col:7}, r:"Le yacht fait 140 mètres, a deux piscines et un héliport. Vous postez une photo « simple et authentique ». Personne n’y croit.", n:"Croisière sur un méga-yacht : « une invitation privée », assure l’Élysée"}
+ ]},
+{who:"all", src:"Remake de 2022", title:"La grande finale",
+ text:"L’équipe de France joue une finale à l’autre bout du monde. Le même soir, une star donne un concert géant à Paris. Vos conseillers débattent : où se montrer ?",
+ options:[
+  {t:"Prendre l’avion présidentiel pour aller au stade", e:{d:0.2,pop:-4}, r:"Vous consolez les joueurs devant les caméras du monde entier. Les écolos calculent l’empreinte carbone du voyage. Elle est spectaculaire.", n:"Finale : le chef de l’État fait 14 000 km pour 90 minutes"},
+  {t:"Aller au concert à Paris, dans la loge VIP", e:{d:0.05,pop:-5,col:2}, r:"Vous dansez dans la loge VIP avec un bracelet lumineux. Une vidéo de 8 secondes devient le mème de l’année.", n:"Concert : la danse présidentielle dans la loge VIP fait 30 millions de vues"},
+  {t:"Regarder le match au PMU du coin", e:{pop:6,col:-4}, r:"Vous trinquez avec les habitués, hurlez sur l’arbitre et payez votre tournée. Les Français vous trouvent formidable. Catastrophe.", n:"Le chef de l’État au PMU : « Il a payé sa tournée », témoigne le patron"}
+ ]}
+];
+
+const BUDGET_FLAVOR = [
+  "Bercy vous présente le projet de loi de finances. Le Haut Conseil des finances publiques a déjà fait un malaise. L’Assemblée est fragmentée en onze groupes, dont trois que personne ne connaît.",
+  "Deuxième budget du mandat. Le rapporteur général a démissionné, son adjoint aussi. Le stagiaire présente le texte en tremblant.",
+  "Mi-mandat. Le Sénat a rejeté le budget avant même de le lire. Les députés réclament 4 000 amendements, dont un pour classer le croissant au patrimoine mondial.",
+  "Avant-dernier budget. Les agences de notation regardent par-dessus votre épaule. L’une d’elles prend des notes.",
+  "Dernier budget avant la présidentielle. Tout le monde veut faire des cadeaux. Surtout ceux qui ne paieront pas."
+];
+function budgetCard(i){
+  const y = yearOf(i) + 1, k = Math.min(4, Math.floor(i/4));
+  return {who:"all", src:"Rendez-vous annuel", title:`Budget ${y} : le grand marchandage`, text:BUDGET_FLAVOR[k], budget:true,
+   options:[
+    {t:"Budget de rigueur : 40 Md€ d’économies (gel des pensions, rabot partout)", e:{def:-8,pop:-9,col:14,ass:-20}, manifChance:0.5, manifType:"fonctionnaires", r:"Les retraités découvrent le mot « gel ». Les syndicats découvrent la joie de préparer des banderoles.", n:`Budget ${y} : « Une rigueur qui ne dit pas son nom », dit son nom`},
+    {t:"Budget de Noël : des chèques pour tout le monde", e:{d:10,def:8,pop:6,col:-6,ass:-8}, r:"Chèque énergie, chèque rentrée, chèque vacances, chèque chèque. Les Français adorent. Le déficit aussi.", n:`Budget ${y} : « Le Père Noël existe, il travaille à Bercy »`},
+    {t:"Pas de budget : loi spéciale et on reconduit tout", e:{d:8,pop:-4,ass:-15}, r:"La France fonctionne en mode « brouillon enregistré automatiquement ».", n:`Budget ${y} : la France passe en « mode avion »`},
+    {t:"Faire écrire le budget par une IA", e:{def:3,pop:-5,ass:-12}, r:"L’IA a halluciné 60 Md€ de recettes. Ça passe inaperçu à Bercy.", n:`Budget ${y} : 60 milliards de recettes « imaginaires mais plausibles »`}
+   ]};
+}
+
+/* ---------------------------------------------------------------------
+   Manifestations
+   --------------------------------------------------------------------- */
+const MANIFS = {
+  retraites:{icon:"🎈", title:"L’intersyndicale contre la réforme des retraites", flavor:"Les huit syndicats sont unis. Ballons géants, merguez, sono à fond et pancartes « 64 ans c’était déjà trop ! ».", size:1.2, demand:10, mult:1},
+  gj:{icon:"🦺", title:"Gilets jaunes — Acte {n}", flavor:"Les ronds-points sont réoccupés. Braséros, palettes, thermos de café et une colère XXL. Rendez-vous samedi sur les Champs-Élysées.", size:0.6, demand:8, mult:1.3},
+  agri:{icon:"🚜", title:"Les tracteurs envahissent Paris", flavor:"1 200 tracteurs sur le périphérique, une montagne de fumier devant la préfecture et des pommes de terre déversées place de la Concorde.", size:0.15, demand:4, mult:3},
+  bloquons:{icon:"⛔", title:"« Bloquons tout ! »", flavor:"Ronds-points, gares, périphériques, lycées et même deux boulangeries. Personne ne sait qui organise, mais tout le monde est là.", size:0.8, demand:9, mult:1.2},
+  profs:{icon:"📚", title:"Les profs dans la rue", flavor:"Les enseignants défilent avec des pancartes à l’orthographe impeccable. Les CRS reçoivent des corrections au stylo rouge.", size:0.5, demand:5, mult:0.8},
+  fonctionnaires:{icon:"🗂️", title:"La fonction publique défile", flavor:"Les fonctionnaires ont déposé la déclaration de manifestation en trois exemplaires, tamponnés. Le cortège démarre à 9 h 00 précises et s’arrête pour la pause déjeuner.", size:0.7, demand:7, mult:0.9},
+  etudiants:{icon:"🎓", title:"Blocage des facs", flavor:"Les étudiants bloquent les universités avec des poubelles et des chaises. L’AG a voté la grève illimitée (jusqu’aux partiels).", size:0.4, demand:3, mult:1},
+  taxis:{icon:"🚕", title:"Opération escargot des taxis", flavor:"Les taxis bloquent les aéroports contre les VTC. Pour une fois, ils ne roulent pas trop vite.", size:0.05, demand:2, mult:4},
+  medecins:{icon:"🩺", title:"Grève des médecins libéraux", flavor:"Les cabinets ferment. Les banderoles sont illisibles, comme les ordonnances.", size:0.1, demand:3, mult:2}
+};
+const RANDOM_MANIFS = ["gj","bloquons","etudiants","taxis","medecins","profs","fonctionnaires"];
+
+/* ---------------------------------------------------------------------
+   Brèves aléatoires « pendant ce temps »
+   --------------------------------------------------------------------- */
+const NEWS = [
+  {t:"La France bat l’Angleterre au rugby. Liesse nationale.", e:{pop:3,col:-5}, c:"Mauvaise nouvelle : les Français sont heureux."},
+  {t:"Un ministre a « oublié » de déclarer trois appartements et un château.", e:{pop:-3,ass:-4}},
+  {t:"Pénurie de paracétamol : les Français se soignent au vin chaud.", e:{col:3}},
+  {t:"L’Italie emprunte désormais moins cher que la France. Rome envoie des condoléances.", e:{d:4}},
+  {t:"La Grèce propose poliment de nous prêter de l’argent.", e:{pop:-2}},
+  {t:"Un député tweete à 3 h du matin. L’hémicycle s’enflamme.", e:{ass:-6}},
+  {t:"Grève RATP : les Parisiens découvrent qu’ils ont des jambes.", e:{col:4}},
+  {t:"Sondage : 87 % des Français pensent que « c’était mieux avant ».", e:{pop:-1}},
+  {t:"Grève des contrôleurs aériens pendant les vacances : 1 200 vols annulés.", e:{col:4,d:0.3}},
+  {t:"Fête de la musique : 4 millions de Français jouent faux en même temps. Bonheur collectif.", e:{pop:2,col:-3}},
+  {t:"Le FMI « suit la situation française avec attention ».", e:{d:6}},
+  {t:"Un milliardaire du luxe menace de partir en Belgique (encore).", e:{pop:1}},
+  {t:"Une plateforme de streaming annonce une série sur votre mandat : « La Chute ».", e:{pop:-2}},
+  {t:"Le Conseil constitutionnel censure 47 % de votre dernière loi, y compris le titre.", e:{ass:-5,pop:-1}},
+  {t:"La Cour des comptes publie un rapport alarmant. Personne ne le lit, comme d’habitude.", e:{}},
+  {t:"Le prix du beurre dépasse celui de l’or. Les Bretons stockent du beurre dans des coffres.", e:{col:4}},
+  {t:"Un sénateur se réveille d’une sieste de 12 ans et demande si le franc existe toujours.", e:{}},
+  {t:"La France gagne l’Eurovision. Personne ne comprend comment.", e:{pop:3,col:-3}},
+  {t:"Un influenceur basé à Dubaï propose de racheter la dette française en cryptomonnaie.", e:{pop:-1}},
+  {t:"Bouchon record de 900 km sur l’A7 pour les départs en vacances.", e:{col:3}},
+  {t:"Une agence de notation place la France « sous surveillance négative ».", e:{d:5}},
+  {t:"Un camembert géant de 3 tonnes bat le record du monde. Fierté nationale.", e:{pop:2}},
+  {t:"Un ancien Premier ministre publie « Ce que j’aurais fait si j’avais duré plus de 3 semaines ».", e:{pop:-1}},
+  {t:"Les Français battent le record mondial de jours de grève par habitant.", e:{col:3}},
+  {t:"Les CRS menacent de faire grève pour leurs heures supplémentaires impayées.", e:{col:2,d:0.5}},
+  {t:"Le Tour de France passe devant l’Élysée. Le peloton siffle.", e:{pop:-2}},
+  {t:"Les intérêts de la dette dépassent le budget de l’Éducation nationale. Bercy fait semblant d’être surpris.", e:{}}
+];
+
+const PM_NAMES = ["Jean-Kévin Intérim","Bernard Provisoire","Marie-Chantal Éphémère","Gérard Démission","Hubert de La Transition","Sylvie Courtecarrière","Patrick Ad-Interim","Ginette Préavis","Thierry Sursis","Corinne Cartons","Jean-Pierre Quatorze-Heures","Odile Démissionnaire","Didier Remaniement","Françoise Expédition-des-Affaires-Courantes"];
+
+const RANKS = [
+  [-Infinity,"Gestionnaire prudent","Honte à vous. La Cour des comptes vous envoie une carte de remerciement."],
+  [600,"Stagiaire à Bercy","Vous avez compris le principe, mais vous manquez d’ambition."],
+  [1200,"Ministre des Finances ordinaire","Un mandat banal : beaucoup de dette, mais rien d’historique."],
+  [2000,"Fossoyeur de la Ve République","Les historiens parleront de vous. Pas en bien."],
+  [3000,"Liquidateur judiciaire de la France","Un travail d’orfèvre. Le FMI a ouvert un bureau permanent à Paris."],
+  [4500,"Naufrageur Suprême","Le Titanic, à côté, c’était une petite fuite. Respect."]
+];
+
+/* =====================================================================
+   GRAPHISMES : caricatures dessinées et mini-vidéos animées (SVG maison)
+   ===================================================================== */
+const SKIN = "#f2c9a6", SKIN_D = "#dfac88";
+const LOOK = {
+  macron:{bg:"#c9d6f2", suit:"#1c2a4a", tie:"#2b3f78", hair:"#6b5440", rx:25, iris:"#3b7dd8", brow:"#5a4532", bw:3,
+    hairTop:"M35 44 C33 22 48 14 62 15 C79 16 90 27 85 46 C82 35 74 29 61 29 C50 29 41 34 35 44Z"},
+  melenchon:{bg:"#f3c9cf", suit:"#2b2b2e", tie:"#c8102e", hair:"#e4e4e4", rx:28, iris:"#4a3a2a", brow:"#a9a9a9", bw:4.5,
+    hairTop:"M32 50 C27 24 44 12 62 13 C82 14 95 27 89 52 C88 40 82 33 73 31 C64 28 52 28 44 32 C38 36 34 43 32 50Z"},
+  lepen:{bg:"#cdd5e8", suit:"#1b2f5e", tie:null, hair:"#e7c46b", rx:25, iris:"#3d6fb0", brow:"#b8954a", bw:3, lips:"#c45a6c",
+    hairBack:"M30 58 C22 26 40 10 62 11 C86 12 102 30 94 60 C98 74 96 86 90 94 L30 94 C24 86 24 72 30 58Z",
+    hairTop:"M35 45 C36 26 50 18 64 19 C80 20 89 31 86 47 C78 36 64 31 50 36 C44 38 39 41 35 45Z"}
+};
+
+// Visage caricatural. mood : neutral, happy, smug, angry, shout, panic, cool
+function face(ch, mood = "neutral", bust = true){
+  const L = LOOK[ch]; let s = "";
+  if(bust) s += `<rect width="120" height="120" fill="${L.bg}"/>`;
+  if(L.hairBack) s += `<path d="${L.hairBack}" fill="${L.hair}"/>`;
+  if(bust){
+    s += `<path d="M6 124 C10 94 34 85 60 85 C86 85 110 94 114 124Z" fill="${L.suit}"/>`;
+    s += L.tie ? `<path d="M48 85 L60 106 L72 85Z" fill="#fff"/><path d="M57 88 L63 88 L65.5 110 L60 117 L54.5 110Z" fill="${L.tie}"/>`
+               : `<path d="M49 85 L60 101 L71 85Z" fill="#fff"/><circle cx="60" cy="96" r="2.5" fill="#e9c46a"/>`;
+  }
+  s += `<rect x="52" y="68" width="16" height="20" fill="${SKIN_D}"/>`;
+  s += `<ellipse cx="${60-L.rx}" cy="54" rx="6" ry="9" fill="${SKIN_D}"/><ellipse cx="${60+L.rx}" cy="54" rx="6" ry="9" fill="${SKIN_D}"/>`;
+  s += `<ellipse cx="60" cy="50" rx="${L.rx}" ry="30" fill="${SKIN}"/>`;
+  s += `<path d="${L.hairTop}" fill="${L.hair}"/>`;
+  const B = {neutral:["M44 42 Q50 39 56 42","M64 42 Q70 39 76 42"], happy:["M44 40 Q50 34 56 40","M64 40 Q70 34 76 40"], angry:["M43 38 L56 44","M77 38 L64 44"], panic:["M44 38 Q50 31 56 35","M64 35 Q70 31 76 38"], smug:["M44 42 Q50 40 56 42","M64 39 Q70 33 76 37"]};
+  const b = B[{shout:"angry", cool:"smug"}[mood] || mood] || B.neutral;
+  s += b.map(d => `<path d="${d}" stroke="${L.brow}" stroke-width="${L.bw}" fill="none" stroke-linecap="round"/>`).join("");
+  if(mood === "cool"){
+    s += `<rect x="40" y="44" width="17" height="11" rx="4" fill="#111"/><rect x="63" y="44" width="17" height="11" rx="4" fill="#111"/><rect x="56" y="47" width="8" height="2.5" fill="#111"/><rect x="43" y="46" width="5" height="2" fill="#fff" opacity=".5"/>`;
+  } else if(mood === "happy"){
+    s += `<path d="M45 51 Q50 46 55 51" stroke="#3a2a20" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M65 51 Q70 46 75 51" stroke="#3a2a20" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
+  } else {
+    const big = mood === "panic", ry = big ? 6 : (mood === "angry" || mood === "shout") ? 3.2 : 4.2, rx = big ? 6 : 5, pr = big ? 1.8 : 2.6, off = mood === "smug" ? 1.5 : 0;
+    [50,70].forEach(x => s += `<ellipse cx="${x}" cy="50" rx="${rx}" ry="${ry}" fill="#fff"/><circle cx="${x+off}" cy="50.5" r="${pr}" fill="${L.iris}"/><circle cx="${x+off}" cy="50.5" r="${pr*.45}" fill="#111"/>`);
+  }
+  s += `<path d="M60 52 Q55.5 61 61 62" stroke="#c58f6d" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+  const lip = L.lips || "#8a3e30";
+  const M = {
+    neutral:`<path d="M51 68 Q60 72 69 68" stroke="${lip}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`,
+    smug:`<path d="M51 69 Q61 72 70 63" stroke="${lip}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`,
+    happy:`<path d="M47 64 Q60 81 73 64Z" fill="#7a1f1f"/><path d="M49 65 Q60 69 71 65 L70.5 67.5 Q60 71 49.5 67.5Z" fill="#fff"/>`,
+    angry:`<ellipse cx="60" cy="70" rx="9" ry="5.5" fill="#5a1010"/><rect x="53" y="65.5" width="14" height="3" rx="1" fill="#fff"/>`,
+    shout:`<ellipse cx="60" cy="71" rx="11" ry="10" fill="#5a1010"/><rect x="52" y="62" width="16" height="4" rx="2" fill="#fff"/><ellipse cx="60" cy="76" rx="6" ry="3" fill="#d4575a"/>`,
+    panic:`<ellipse cx="60" cy="71" rx="5" ry="7" fill="#5a1010"/>`
+  };
+  s += M[mood] || (mood === "cool" ? M.smug : M.neutral);
+  if(mood === "happy") s += `<circle cx="44" cy="61" r="5" fill="#f28b82" opacity=".45"/><circle cx="76" cy="61" r="5" fill="#f28b82" opacity=".45"/>`;
+  if(mood === "panic") s += `<path d="M84 28 Q89 37 84 41 Q79 37 84 28Z" fill="#7cc4ff"/>`;
+  if(mood === "shout") s += `<path d="M88 64 L100 60 M89 70 L102 71 M88 76 L99 82" stroke="#d42a2f" stroke-width="2.5" stroke-linecap="round"/>`;
+  if(bust && ch === "lepen") s += `<g transform="translate(14 82)"><path d="M0 12 L4 0 L10 8 L16 8 L22 0 L26 12Z" fill="#e8913a"/><circle cx="13" cy="17" r="11" fill="#e8913a"/><circle cx="9" cy="16" r="1.7" fill="#222"/><circle cx="17" cy="16" r="1.7" fill="#222"/><path d="M11 21 Q13 23 15 21" stroke="#222" fill="none" stroke-width="1.2"/></g>`;
+  return s;
+}
+function faceSVG(ch, mood, size){ return `<svg class="face" width="${size}" height="${size}" viewBox="0 0 120 120" aria-hidden="true">${face(ch, mood, true)}</svg>`; }
+function presHead(ch, x, y, size, mood){ return `<svg x="${x-size/2}" y="${y-size/2}" width="${size}" height="${size}" viewBox="0 0 120 120" overflow="visible">${face(ch, mood, false)}</svg>`; }
+
+// Le chef de l'État en pied (grosse tête, petit corps). outfit : suit, swim, dance
+function pres(ch, x, y, s = 1, mood = "neutral", outfit = "suit", cls = "", d = 0){
+  const L = LOOK[ch], swim = outfit === "swim", cloth = swim ? SKIN : L.suit, up = outfit === "dance";
+  const torso = swim ? `<rect x="-11" y="-30" width="22" height="22" rx="6" fill="${SKIN}"/><rect x="-11" y="-12" width="22" height="10" rx="3" fill="#2b7bd1"/>`
+    : `<rect x="-12" y="-32" width="24" height="30" rx="6" fill="${L.suit}"/><path d="M-4 -32 L0 -24 L4 -32Z" fill="#fff"/>${L.tie ? `<rect x="-1.2" y="-29" width="2.4" height="12" fill="${L.tie}"/>` : ""}`;
+  return `<g transform="translate(${x} ${y}) scale(${s})"><g class="${cls}" style="animation-delay:${d}s">
+    <rect x="-9" y="-4" width="7" height="16" rx="2" fill="${swim ? SKIN : "#222"}"/><rect x="2" y="-4" width="7" height="16" rx="2" fill="${swim ? SKIN : "#222"}"/>
+    <rect x="-20" y="-30" width="8" height="20" rx="4" fill="${cloth}" transform="rotate(${up ? -140 : 15} -16 -28)"/>
+    <rect x="12" y="-30" width="8" height="20" rx="4" fill="${cloth}" transform="rotate(${up ? 140 : -15} 16 -28)"/>
+    ${torso}<svg x="-30" y="-86" width="60" height="60" viewBox="0 0 120 120" overflow="visible">${face(ch, mood, false)}</svg></g></g>`;
+}
+
+const PAL = ["#e4572e","#4c9f70","#f3a712","#3f88c5","#8e5ad6","#d64d8a","#2bb3a3","#a0522d","#5c6bc0","#c0ca33"];
+const SKINS = ["#f2c9a6","#e0ac84","#c68b62","#8d5a3b","#f6d5bd"];
+let UID = 0;
+const uid = () => "g" + (++UID);
+function bg(top, bot){ const id = uid(); return `<defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${top}"/><stop offset="1" stop-color="${bot}"/></linearGradient></defs><rect width="640" height="300" fill="url(#${id})"/>`; }
+function em(ch, x, y, size, cls = "", d = 0, dur = ""){ return `<text x="${x}" y="${y}" font-size="${size}" text-anchor="middle" class="${cls}" style="animation-delay:${d}s;${dur ? "animation-duration:" + dur : ""}">${ch}</text>`; }
+function guy(x, y, o = {}){
+  const i = Math.abs(Math.round(x * 3 + y * 7)), c = o.c || PAL[i % PAL.length], sk = SKINS[i % SKINS.length];
+  let sign = "";
+  if(o.sign){ const w = o.sign.length * 5.8 + 10; sign = `<line x1="9" y1="-14" x2="9" y2="-46" stroke="#7a5230" stroke-width="2"/><rect x="${9-w/2}" y="-62" width="${w}" height="17" rx="2" fill="#fff" stroke="#333"/><text x="9" y="-50" font-size="9" font-weight="800" fill="#c62828" text-anchor="middle">${o.sign}</text>`; }
+  return `<g transform="translate(${x} ${y}) scale(${o.s || 1})"><g class="${o.cls || ""}" style="animation-delay:${o.d || 0}s">${sign}
+    <rect x="-6" y="-4" width="5" height="13" fill="#333"/><rect x="1" y="-4" width="5" height="13" fill="#333"/>
+    ${o.up ? `<rect x="-11" y="-42" width="4" height="20" rx="2" fill="${c}"/><rect x="7" y="-42" width="4" height="20" rx="2" fill="${c}"/>` : ""}
+    <rect x="-8" y="-24" width="16" height="22" rx="6" fill="${c}"/><circle cx="0" cy="-30" r="7.5" fill="${sk}"/></g></g>`;
+}
+function crs(x, y, d = 0){
+  return `<g transform="translate(${x} ${y})"><g class="a-bob" style="animation-delay:${d}s;animation-duration:.9s"><rect x="-6" y="-4" width="5" height="13" fill="#111"/><rect x="1" y="-4" width="5" height="13" fill="#111"/><rect x="-8" y="-25" width="16" height="23" rx="5" fill="#1b2433"/><circle cx="0" cy="-32" r="8.5" fill="#2b3446"/><rect x="-7" y="-35" width="14" height="6" rx="2" fill="#9cc0e6" opacity=".85"/><rect x="5" y="-34" width="10" height="34" rx="3" fill="#cfe0f2" opacity=".7" stroke="#86a7c9"/></g></g>`;
+}
+function van(x, y){
+  return `<g transform="translate(${x} ${y})"><rect width="96" height="40" rx="7" fill="#eceff5"/><rect x="66" y="6" width="24" height="14" rx="2" fill="#9cc3e8"/><rect y="20" width="96" height="6" fill="#1f3c8f"/><text x="8" y="16" font-size="10" font-weight="800" fill="#1f3c8f">POLICE</text><circle cx="22" cy="42" r="8" fill="#111"/><circle cx="76" cy="42" r="8" fill="#111"/><rect x="30" y="-7" width="14" height="7" rx="2" fill="#2b6cff" class="a-blink"/><rect x="46" y="-7" width="14" height="7" rx="2" fill="#ff2b2b" class="a-blink" style="animation-delay:.25s"/></g>`;
+}
+function city(base, col, win, night){
+  let x = -10, s = "", k = 3;
+  while(x < 650){
+    const w = 58 + (k * 37 % 41), h = 64 + (k * 53 % 86); k++;
+    s += `<rect x="${x}" y="${base-h}" width="${w}" height="${h}" fill="${col}"/><rect x="${x-3}" y="${base-h-8}" width="${w+6}" height="9" fill="${col}" opacity=".85"/>`;
+    for(let wy = base - h + 10; wy < base - 12; wy += 17) for(let wx = x + 7; wx < x + w - 9; wx += 15){
+      const lit = night && ((wx * 3 + wy * 7) % 5 === 0);
+      s += `<rect x="${wx}" y="${wy}" width="7" height="10" fill="${lit ? "#ffd36b" : win}"/>`;
+    }
+    x += w + 5;
+  }
+  return s;
+}
+function cloud(x, y, s = 1, cls = "", d = 0){ return `<g transform="translate(${x} ${y}) scale(${s})"><g class="${cls}" style="animation-delay:${d}s"><ellipse cx="0" cy="0" rx="36" ry="14" fill="#fff" opacity=".92"/><ellipse cx="-16" cy="-8" rx="18" ry="12" fill="#fff" opacity=".92"/><ellipse cx="14" cy="-10" rx="20" ry="14" fill="#fff" opacity=".92"/></g></g>`; }
+function smoke(x, y, i = 0, col = "#4a4048"){ let s = ""; for(let k = 0; k < 4; k++) s += `<circle cx="${x + (k % 2 ? 7 : -7)}" cy="${y}" r="13" fill="${col}" opacity=".75" class="a-smoke" style="animation-delay:${-(k * .8 + (i % 7) * .37)}s"/>`; return s; }
+function waves(y, c, op){ let d = `M0 ${y}`; for(let x = 0; x < 760; x += 40) d += " q10 -6 20 0 q10 6 20 0"; return `<path d="${d}" stroke="${c}" stroke-width="3" fill="none" opacity="${op}"/>`; }
+function confetti(n = 24){ const cs = ["#ff4f6d","#ffd23f","#3fa7ff","#7cff6b","#c77dff","#ffffff"]; let s = ""; for(let i = 0; i < n; i++) s += `<rect x="${(i * 97) % 640}" y="0" width="6" height="10" fill="${cs[i % cs.length]}" class="a-fall" style="animation-delay:${-((i * .37) % 3.2)}s;animation-duration:${2.6 + (i % 5) * .3}s"/>`; return s; }
+function flag(x, y){ return `<g transform="translate(${x} ${y})"><rect x="0" y="-50" width="2" height="50" fill="#444"/><g class="a-flag"><rect x="2" y="-50" width="8" height="14" fill="#1f3c8f"/><rect x="10" y="-50" width="8" height="14" fill="#fff"/><rect x="18" y="-50" width="8" height="14" fill="#d42a2f"/></g></g>`; }
+function fit(t, n){ t = String(t || ""); return esc(t.length > n ? t.slice(0, n - 1) + "…" : t); }
+
+const SCENES = {
+  riot(o){
+    let s = bg("#2d1630","#e2673a") + `<circle cx="520" cy="66" r="24" fill="#ffd9a0" opacity=".45"/>` + city(224,"#2a1828","#3a2836",true);
+    s += `<rect y="224" width="640" height="76" fill="#3b3a42"/><rect y="262" width="640" height="3" fill="#fff" opacity=".15"/>`;
+    s += smoke(130,206,0) + smoke(342,196,1) + smoke(560,208,2);
+    [[130,0],[560,.15]].forEach(([x,d]) => { s += `<rect x="${x-12}" y="226" width="24" height="26" rx="3" fill="#3f6b3f"/>` + em("🔥",x,232,36,"a-flick",d); });
+    s += `<rect x="300" y="216" width="86" height="22" rx="6" fill="#6b6f7a"/><path d="M314 216 L327 200 L360 200 L373 216Z" fill="#555a66"/><circle cx="318" cy="240" r="8" fill="#111"/><circle cx="368" cy="240" r="8" fill="#111"/>` + em("🔥",330,214,42,"a-flick") + em("🔥",358,208,30,"a-flick",.1);
+    s += van(10,206);
+    s += `<g class="a-adv">` + [0,1,2,3,4,5].map(i => crs(150 + i*24, 282 - (i%2)*9, i*.12)).join("") + `</g>`;
+    [[262,236,0],[292,258,.8],[244,262,1.6]].forEach(([x,y,d]) => s += `<circle cx="${x}" cy="${y}" r="15" fill="#ececec" class="a-gas" style="animation-delay:${d}s"/>`);
+    const signs = ["NON !","DÉMISSION","ASSEZ !","RÉVOLTE"];
+    for(let i = 0; i < 10; i++) s += guy(408 + i*22, 276 + (i%2)*10, {cls:"a-bob", d:i*.07, sign:i%3 === 0 ? signs[i/3] : null, up:i%3 === 1});
+    s += em("🛴",470,206,26,"a-throw") + em("🥖",540,200,24,"a-throw",1.2) + em("🍅",500,214,18,"a-throw",.6);
+    return s;
+  },
+  march(o){
+    let s = bg("#7fbfef","#dcefff") + cloud(90,50,1,"a-cloud") + cloud(420,34,.8,"a-cloud",-6) + city(226,"#d9ccb4","#9db5c9",false);
+    s += `<rect y="226" width="640" height="74" fill="#8d8f96"/>`;
+    s += `<g class="a-bob" style="animation-duration:1.8s"><line x1="540" y1="122" x2="522" y2="232" stroke="#555" stroke-width="1.5"/><ellipse cx="540" cy="92" rx="56" ry="34" fill="#e53935"/><text x="540" y="97" font-size="11" font-weight="800" fill="#fff" text-anchor="middle">${fit(o.balloon || "INTERSYNDICALE", 18)}</text></g>`;
+    s += em("🌭",600,262,26) + smoke(600,236,0,"#bbbbbb");
+    if(o.calm) s += [0,1,2,3].map(i => crs(30 + i*22, 252, i*.2)).join("");
+    for(let g = 0; g < 2; g++){
+      s += `<g class="a-march" style="animation-delay:${-g*7}s"><rect x="40" y="212" width="160" height="26" rx="3" fill="#fff" stroke="#c62828" stroke-width="2"/><text x="120" y="230" font-size="12" font-weight="800" fill="#c62828" text-anchor="middle">${fit(o.sign || "TOUS ENSEMBLE !", 24)}</text>`;
+      for(let i = 0; i < 14; i++) s += guy(30 + i*34 + (i%3)*4, 262 + (i%3)*12, {cls:"a-bob", d:i*.11, up:i%4 === 2, sign:i === 9 ? "NON !" : null});
+      s += `</g>`;
+    }
+    return s;
+  },
+  beach(o){
+    let s = bg("#4fb8ee","#c4ebff");
+    s += `<g class="a-spin" style="animation-duration:24s">` + Array.from({length:12}, (_,i) => { const a = i * Math.PI / 6; return `<line x1="${(560+Math.cos(a)*38).toFixed(1)}" y1="${(62+Math.sin(a)*38).toFixed(1)}" x2="${(560+Math.cos(a)*54).toFixed(1)}" y2="${(62+Math.sin(a)*54).toFixed(1)}" stroke="#ffd23f" stroke-width="4" stroke-linecap="round"/>`; }).join("") + `</g><circle cx="560" cy="62" r="30" fill="#ffd23f" class="a-pulse"/>`;
+    s += cloud(150,60,.9,"a-cloud") + em("🕊️",0,90,22,"a-fly");
+    s += `<rect y="150" width="640" height="70" fill="#1f8dd0"/><g class="a-wave">${waves(160,"#fff",.6)}${waves(186,"#bfe6ff",.5)}</g>`;
+    s += em("🚤",-30,184,34,"a-drive");
+    s += `<path d="M0 212 Q320 196 640 214 L640 300 L0 300Z" fill="#f2d79e"/>`;
+    const pl = fit(o.place || "La plage", 26), w = String(o.place || "La plage").length * 6.4 + 18;
+    s += `<rect x="186" y="214" width="6" height="52" fill="#8a5a2b"/><rect x="${189-w/2}" y="194" width="${w}" height="22" rx="3" fill="#a86b32"/><text x="189" y="209" font-size="11" font-weight="800" fill="#fff" text-anchor="middle">${pl}</text>`;
+    s += em("⛱️",500,286,110);
+    s += pres(o.ch,340,270,1.3,"cool","swim","a-dance");
+    s += em("🍹",384,228,24,"a-bob") + em("🦀",110,288,22,"a-crab");
+    s += em("📸",40,252,30) + `<circle cx="52" cy="234" r="20" fill="#fff" class="a-flash"/>`;
+    return s;
+  },
+  concert(o){
+    let s = bg("#090414","#2b0d3e");
+    ["#ff4fd8","#4fd8ff","#ffe14f","#7cff4f"].forEach((c,i) => { const x = 110 + i*140; s += `<g class="a-beam" style="animation-delay:${-i*.8}s"><polygon points="${x},0 ${x-70},230 ${x+70},230" fill="${c}" opacity=".2"/></g>`; });
+    s += `<circle cx="320" cy="28" r="16" fill="#cfd3dc"/><path d="M304 28 H336 M320 12 V44 M309 17 L331 39 M331 17 L309 39" stroke="#9aa0ad" stroke-width="1"/>` + em("✨",342,26,16,"a-twinkle") + em("✨",298,42,12,"a-twinkle",.5);
+    s += `<text x="320" y="86" font-family="Anton,Impact,sans-serif" font-size="30" fill="#fff" text-anchor="middle" class="a-blink2">${fit(o.sign || "FÊTE DE LA MUSIQUE", 26)}</text>`;
+    [70,570].forEach(x => { s += `<rect x="${x-30}" y="120" width="60" height="96" rx="4" fill="#1b1b1f" stroke="#333"/><circle cx="${x}" cy="148" r="14" fill="#333" class="a-pulse" style="animation-duration:.25s"/><circle cx="${x}" cy="190" r="20" fill="#333" class="a-pulse" style="animation-duration:.25s"/>`; });
+    s += `<rect x="40" y="214" width="560" height="14" fill="#1a1a1a"/><rect x="40" y="228" width="560" height="30" fill="#0e0e10"/>`;
+    s += `<rect x="200" y="186" width="70" height="28" fill="#222" stroke="#444"/>` + em("🎧",235,182,24,"a-bob");
+    s += pres(o.ch,340,212,1.15,"happy","dance","a-dance");
+    [[150,170,0],[460,150,.8],[520,180,1.6],[260,140,2.2]].forEach(([x,y,d],i) => s += em(i % 2 ? "🎶" : "🎵",x,y,22,"a-float",-d));
+    for(let i = 0; i < 19; i++) s += guy(14 + i*34, 300 - (i%2)*8, {c:["#2a2a3a","#3a2a4a","#1f2f3f"][i%3], up:true, cls:"a-jump", d:(i%5)*.09});
+    return s + confetti(26);
+  },
+  money(o){
+    let s = bg("#0b2a20","#1b5e45");
+    s += `<text x="320" y="30" font-size="13" font-weight="800" fill="#b7f0d4" text-anchor="middle" letter-spacing="2">MINISTÈRE DES FINANCES · PLANCHE À BILLETS</text>`;
+    s += `<rect x="40" y="96" width="180" height="130" rx="10" fill="#6c7784" stroke="#3b434d" stroke-width="3"/><rect x="214" y="150" width="30" height="16" fill="#3b434d"/><text x="130" y="116" font-size="10" font-weight="800" fill="#fff" text-anchor="middle">IMPRIMERIE TURBO</text>` + em("⚙️",90,180,46,"a-spin") + em("⚙️",165,205,34,"a-spin",-.5) + smoke(70,92,0,"#9aaab0");
+    for(let i = 0; i < 18; i++) s += em(i % 3 ? "💶" : "💸", 270 + (i*53) % 340, 0, 26, "a-fall", -((i*.41) % 3.2));
+    s += `<ellipse cx="450" cy="272" rx="170" ry="28" fill="#000"/><text x="450" y="280" font-size="20" fill="#ff5252" text-anchor="middle" font-family="Anton,Impact,sans-serif" letter-spacing="3">DETTE</text>`;
+    s += pres(o.ch,250,280,1,o.mood === "panic" || o.mood === "angry" ? o.mood : "happy","suit","a-bob");
+    if(o.sign) s += `<text x="540" y="76" font-family="Anton,Impact,sans-serif" font-size="32" fill="#ffe14f" text-anchor="middle" class="a-pulse">${fit(o.sign, 20)}</text>`;
+    return s;
+  },
+  assembly(o){
+    let s = bg("#3d0f12","#7a2226");
+    const cols = ["#c62828","#e53935","#ec6f8f","#43a047","#f9a825","#1e88e5","#3949ab","#1a237e"];
+    for(let r = 0; r < 4; r++){
+      const R = 230 - r*44, n = 12 + (3 - r)*3;
+      s += `<path d="M${320-R} 330 A${R} ${R} 0 0 1 ${320+R} 330" stroke="#5a1418" stroke-width="30" fill="none"/>`;
+      for(let k = 0; k < n; k++){ const a = Math.PI * (1.08 + .84*k/(n-1)); s += guy((320 + Math.cos(a)*R).toFixed(1), (340 + Math.sin(a)*R).toFixed(1), {s:.55, c:cols[Math.floor(k/n*cols.length)], cls:(k+r)%3 === 0 ? "a-jump" : "a-bob", d:((k*7+r)%10)*.06, up:(k+r)%5 === 0}); }
+    }
+    s += `<rect x="270" y="236" width="100" height="64" fill="#8a5a2b"/><rect x="262" y="230" width="116" height="10" fill="#a8743c"/>` + guy(320,232,{c:"#222"}) + em("🔨",346,212,26,"a-bang");
+    for(let i = 0; i < 7; i++) s += em("📄",80 + i*80,200 - (i%3)*30,18,"a-paper",-i*.5);
+    s += `<text x="320" y="56" font-family="Anton,Impact,sans-serif" font-size="46" fill="#fff" stroke="#c62828" stroke-width="2" text-anchor="middle" class="a-blink2">${fit(o.sign || "BROUHAHA", 16)}</text>`;
+    return s;
+  },
+  road(o){
+    const cars = o.v === "cars";
+    let s = bg("#9fd3f5","#e8f6ff") + cloud(120,46,.9,"a-cloud") + cloud(460,60,.7,"a-cloud",-5) + city(170,"#c8c3bb","#aab8c6",false);
+    s += `<rect y="170" width="640" height="20" fill="#7cb342"/><rect y="190" width="640" height="110" fill="#5d5f66"/><g class="a-dash">${Array.from({length:18},(_,i) => `<rect x="${i*44}" y="250" width="24" height="4" fill="#fff"/>`).join("")}</g>`;
+    s += `<rect x="20" y="100" width="600" height="8" fill="#888"/><rect x="40" y="108" width="6" height="62" fill="#888"/><rect x="594" y="108" width="6" height="62" fill="#888"/><rect x="170" y="72" width="300" height="30" rx="3" fill="#1565c0" stroke="#fff" stroke-width="2"/><text x="320" y="92" font-size="12" font-weight="800" fill="#fff" text-anchor="middle">${fit(o.sign || (cars ? "A6 · BOUCHON DE 400 km" : "PÉRIPH · BLOQUÉ PAR LES TRACTEURS"), 42)}</text>`;
+    const veh = cars ? ["🚗","🚙","🚕","🚐","🚗","🚙","🏎️","🚗"] : ["🚜","🚜","🚜","🚜","🚜","🚜"];
+    veh.forEach((v,i) => s += em(v, 700, i % 2 ? 238 : 286, cars ? 36 : 50, "a-driveL", -i*(cars ? 1.6 : 2.3), cars ? "13s" : "14s"));
+    if(!cars) s += `<circle cx="100" cy="214" r="14" fill="#e3b341"/><circle cx="130" cy="216" r="12" fill="#d4a12a"/>` + em("💩",560,218,24) + em("🪰",572,194,12,"a-bob");
+    return s;
+  },
+  tv(o){
+    let s = bg("#0d1b3d","#1d3a7a");
+    for(let i = 0; i < 13; i++) s += `<line x1="${i*60}" y1="0" x2="${i*60-80}" y2="300" stroke="#fff" opacity=".05"/>`;
+    s += `<rect x="30" y="34" width="360" height="212" rx="12" fill="#111" stroke="#444" stroke-width="4"/><rect x="42" y="46" width="336" height="188" fill="#2b4a8a"/>`;
+    s += `<svg x="136" y="52" width="148" height="148" viewBox="0 0 120 120">${face(o.ch,o.mood === "shout" ? "angry" : "neutral",true)}</svg><svg x="136" y="52" width="148" height="148" viewBox="0 0 120 120" class="a-talk">${face(o.ch,o.mood === "shout" ? "shout" : "angry",true)}</svg>`;
+    s += `<rect x="42" y="196" width="336" height="38" fill="#d42a2f"/><rect x="42" y="196" width="118" height="15" fill="#fff"/><text x="48" y="207" font-size="10" font-weight="800" fill="#d42a2f">ÉDITION SPÉCIALE</text><text x="48" y="227" font-size="12" font-weight="700" fill="#fff">${fit(o.caption || "Le chef de l’État s’exprime", 48)}</text>`;
+    s += `<rect x="440" y="22" width="150" height="262" rx="20" fill="#111"/><rect x="450" y="40" width="130" height="228" rx="8" fill="#000"/><svg x="470" y="66" width="90" height="90" viewBox="0 0 120 120">${face(o.ch,"happy",true)}</svg><text x="515" y="180" font-size="11" font-weight="700" fill="#fff" text-anchor="middle">👁 ${esc(o.views || "12,4 M")} vues</text><text x="515" y="198" font-size="9" fill="#aaa" text-anchor="middle">#France #Dette #POV</text>`;
+    for(let i = 0; i < 6; i++) s += em(i % 2 ? "❤️" : "👍",545 + (i%3)*12,256,16,"a-float",-i*.5);
+    return s;
+  },
+  luxury(o){
+    let s = bg("#2a1a08","#6b4a18");
+    s += `<line x1="320" y1="0" x2="320" y2="40" stroke="#c9a24a" stroke-width="2"/><path d="M270 40 Q320 70 370 40" stroke="#c9a24a" stroke-width="3" fill="none"/>`;
+    for(let i = 0; i < 5; i++) s += `<circle cx="${280+i*20}" cy="${50+(i%2)*8}" r="5" fill="#fff6c8"/>` + em("✨",280 + i*20,44 + (i%2)*8,12,"a-twinkle",i*.3);
+    s += `<text x="320" y="110" font-family="Anton,Impact,sans-serif" font-size="22" fill="#e9c46a" text-anchor="middle" letter-spacing="4">${fit(o.sign || "PALAIS DE L’ÉLYSÉE", 26)}</text>`;
+    s += pres(o.ch,330,232,1.2,"smug","suit","a-bob");
+    s += `<rect x="40" y="222" width="560" height="80" fill="#f7f2e6"/><rect x="40" y="222" width="560" height="6" fill="#e0d6c0"/>`;
+    [110,165].forEach(x => { for(let k = 0; k < 6; k++) s += `<ellipse cx="${x}" cy="${228-k*5}" rx="22" ry="5" fill="#fff" stroke="#2b4a9b" stroke-width="1.5"/>`; });
+    s += em("🦞",250,248,34) + em("🍾",430,254,48) + em("🥂",480,250,30) + em("🥂",530,250,30) + `<circle cx="438" cy="204" r="5" fill="#e9c46a" class="a-pop"/>`;
+    for(let i = 0; i < 6; i++) s += em("✨",80 + i*100,150 + (i%3)*20,16,"a-twinkle",i*.4);
+    return s;
+  },
+  eiffel(o){
+    const gold = o.v === 2, c = gold ? "#e9b62f" : "#6d4c35";
+    let s = bg("#f59a62","#ffe2b8") + `<circle cx="120" cy="80" r="34" fill="#ffd27a" opacity=".8"/>` + cloud(470,60,.8,"a-cloud") + cloud(200,40,.6,"a-cloud",-6);
+    s += `<rect y="262" width="640" height="38" fill="#5b7f9e"/>`;
+    s += `<polygon points="320,26 325,60 333,118 348,168 374,220 404,268 368,268 350,240 290,240 272,268 236,268 266,220 292,168 307,118 315,60" fill="${c}"/><path d="M290 268 Q320 226 350 268Z" fill="#f7cfa0"/><rect x="282" y="164" width="76" height="8" fill="${c}"/><rect x="298" y="114" width="44" height="7" fill="${c}"/>`;
+    s += `<path d="M300 172 L340 220 M340 172 L300 220 M310 120 L332 166 M330 120 L308 166" stroke="${gold ? "#fff2b0" : "#4a3222"}" stroke-width="1.2" opacity=".6"/>`;
+    if(gold) for(let i = 0; i < 8; i++) s += em("✨",270 + (i*37)%110,60 + (i*29)%190,16,"a-twinkle",i*.25);
+    if(o.v === 0) s += `<g class="a-sway"><rect x="472" y="180" width="6" height="86" fill="#7a5230"/><rect x="420" y="146" width="110" height="40" rx="4" fill="#fff" stroke="#c62828" stroke-width="3"/><text x="475" y="172" font-size="17" font-weight="800" fill="#c62828" text-anchor="middle">À VENDRE</text></g><g transform="rotate(-12 150 200)"><text x="150" y="200" font-family="Anton,Impact,sans-serif" font-size="34" fill="#c62828" text-anchor="middle" class="a-blink2">VENDUE !</text></g>`;
+    if(o.v === 1) s += `<circle cx="320" cy="24" r="22" fill="#111" class="a-pulse"/><text x="320" y="33" font-size="26" font-weight="800" fill="#fff" text-anchor="middle">X</text>`;
+    s += guy(150,286,{cls:"a-bob"}) + guy(176,288,{cls:"a-bob",d:.2}) + em("📸",200,268,20);
+    return s;
+  },
+  nuclear(o){
+    let s = bg("#8ccff5","#e7f6ff") + cloud(250,40,.8,"a-cloud");
+    s += `<path d="M0 230 Q160 196 320 222 T640 214 L640 300 L0 300Z" fill="#7cb342"/>`;
+    [[150,1],[262,.85]].forEach(([x,k],i) => { s += `<path d="M${x-44*k} 262 Q${x-18*k} 190 ${x-28*k} ${262-150*k} L${x+28*k} ${262-150*k} Q${x+18*k} 190 ${x+44*k} 262Z" fill="#cfd3da" stroke="#aab0ba"/>` + smoke(x, 262-150*k-6, i*3, "#ffffff"); });
+    s += `<path d="M360 262 L360 210 A40 40 0 0 1 440 210 L440 262Z" fill="#e3e6eb" stroke="#aab0ba"/><rect x="330" y="236" width="140" height="28" fill="#d0d4db"/>`;
+    s += `<path d="M520 262 L540 120 L560 262 M528 200 L552 200 M532 160 L548 160 M500 130 L580 130" stroke="#666" stroke-width="3" fill="none"/>`;
+    s += `<rect x="380" y="34" width="230" height="66" rx="6" fill="#fff" stroke="#f9a825" stroke-width="3"/><text x="392" y="56" font-size="12" font-weight="800" fill="#333">☢️ EPR · mise en service prévue :</text>`;
+    ["2035","2042","2051","2060 (promis)"].forEach((y,i) => s += `<text x="495" y="90" font-family="Anton,Impact,sans-serif" font-size="26" fill="#c62828" text-anchor="middle" class="a-yr" style="animation-delay:${i*2-8}s">${y}</text>`);
+    s += em("👷",60,290,30,"a-crab") + em("💸",470,200,22,"a-float");
+    return s;
+  },
+  party(o){
+    let s = bg("#0f1846","#3b2a72");
+    [[120,70,"#ff4f6d",0],[320,50,"#ffd23f",.7],[510,80,"#4fd8ff",1.4],[220,110,"#7cff6b",1.9]].forEach(([x,y,c,d]) => s += `<g class="a-burst" style="animation-delay:${d}s"><circle cx="${x}" cy="${y}" r="34" fill="none" stroke="${c}" stroke-width="4" stroke-dasharray="3 7"/><circle cx="${x}" cy="${y}" r="18" fill="none" stroke="${c}" stroke-width="3" stroke-dasharray="2 5"/></g>`);
+    s += `<text x="320" y="160" font-family="Anton,Impact,sans-serif" font-size="34" fill="#fff" text-anchor="middle" class="a-pulse">${fit(o.sign || "VIVE LA FRANCE !", 24)}</text>`;
+    s += pres(o.ch,320,262,1.1,o.mood || "happy","dance","a-dance");
+    for(let i = 0; i < 18; i++){ const x = 16 + i*36; if(Math.abs(x - 320) < 34) continue; s += guy(x, 296 - (i%2)*10, {up:i%3 !== 0, cls:"a-jump", d:(i%6)*.08}); if(i%4 === 1) s += flag(x + 8, 252 - (i%2)*10); }
+    return s + confetti(28);
+  },
+  sea(o){
+    let s = bg("#6ec6f5","#d6f0ff") + cloud(140,50,.8,"a-cloud");
+    s += `<rect y="130" width="640" height="170" fill="#1b6fae"/><rect y="205" width="640" height="95" fill="#124f80"/><g class="a-wave">${waves(134,"#fff",.7)}</g>`;
+    s += `<g class="a-bob" style="animation-duration:1.4s">${em("🛥️",330,146,80)}</g>`;
+    s += `<polygon points="556,134 604,134 592,104 566,104" fill="#fff"/>` + em("🐧",580,108,22,"a-bob");
+    s += `<g class="a-swim2"><ellipse cx="120" cy="250" rx="46" ry="18" fill="#ffd23f"/><rect x="110" y="222" width="18" height="14" rx="4" fill="#ffd23f"/><rect x="118" y="202" width="4" height="22" fill="#ffd23f"/><circle cx="100" cy="250" r="5" fill="#7cc4ff"/><circle cx="120" cy="250" r="5" fill="#7cc4ff"/><circle cx="140" cy="250" r="5" fill="#7cc4ff"/></g>`;
+    [["🐟",420,236,0],["🐠",500,266,-2],["🐟",270,282,-4]].forEach(([f,x,y,d]) => s += em(f,x,y,22,"a-swim",d));
+    s += em("🦈",700,196,40,"a-driveL",-3,"16s");
+    for(let i = 0; i < 6; i++) s += `<circle cx="${180+i*70}" cy="292" r="${3+i%3}" fill="#fff" opacity=".5" class="a-float" style="animation-delay:${-i*.5}s"/>`;
+    return s;
+  },
+  sinking(o){
+    let s = bg("#1a222c","#46525f");
+    s += `<polygon points="470,0 450,60 466,60 440,130 500,48 480,48 500,0" fill="#ffe14f" class="a-flash"/>`;
+    for(let i = 0; i < 22; i++) s += `<line x1="${(i*31)%640}" y1="0" x2="${(i*31)%640-10}" y2="24" stroke="#cfd8e3" stroke-width="1.5" opacity=".6" class="a-rain" style="animation-delay:${-((i*.13)%.8)}s"/>`;
+    s += `<g class="a-sink"><path d="M150 190 L470 190 L440 240 L180 240Z" fill="#2b3a55"/><rect x="200" y="150" width="200" height="40" fill="#e8e8e8"/><rect x="250" y="110" width="30" height="40" fill="#d42a2f"/><text x="320" y="224" font-family="Anton,Impact,sans-serif" font-size="22" fill="#fff" text-anchor="middle" letter-spacing="3">LA FRANCE</text><rect x="360" y="60" width="4" height="90" fill="#333"/><rect x="364" y="62" width="14" height="22" fill="#1f3c8f"/><rect x="378" y="62" width="14" height="22" fill="#fff"/><rect x="392" y="62" width="14" height="22" fill="#d42a2f"/>${[220,250,300,330].map(x => `<circle cx="${x}" cy="170" r="6" fill="#9cc3e8"/>`).join("")}</g>`;
+    s += `<rect y="228" width="640" height="72" fill="#1d3b5c"/><g class="a-wave">${waves(230,"#9cc3e8",.8)}${waves(252,"#5d86ad",.7)}</g>`;
+    s += `<g class="a-bob" style="animation-duration:1.2s">${pres(o.ch,535,262,.62,o.mood || "happy","suit")}<path d="M470 250 L600 250 L585 274 L485 274Z" fill="#f57c00"/><text x="535" y="267" font-size="12" font-weight="800" fill="#fff" text-anchor="middle">FMI</text></g>`;
+    s += `<g class="a-crab"><polygon points="90,262 104,240 116,262" fill="#7d8a99"/><polygon points="200,272 212,252 222,272" fill="#7d8a99"/></g>`;
+    return s;
+  },
+  revolution(o){
+    let s = bg("#140c1c","#6a2a18");
+    s += `<rect x="150" y="96" width="340" height="134" fill="#e6dcc6"/><polygon points="270,96 320,70 370,96" fill="#d8ccb2"/>${[170,210,250,390,430,470].map(x => `<rect x="${x-6}" y="110" width="12" height="120" fill="#fff"/>`).join("")}<text x="320" y="122" font-size="11" font-weight="800" fill="#6b5a3a" text-anchor="middle" letter-spacing="2">PALAIS DE L’ÉLYSÉE</text>`;
+    s += `<rect x="318" y="38" width="3" height="34" fill="#444"/><g class="a-flag"><rect x="321" y="38" width="10" height="16" fill="#1f3c8f"/><rect x="331" y="38" width="10" height="16" fill="#fff"/><rect x="341" y="38" width="10" height="16" fill="#d42a2f"/></g>`;
+    s += `<g class="a-shake">${Array.from({length:9},(_,i) => `<rect x="${276+i*10}" y="140" width="3" height="90" fill="#111"/>`).join("")}<rect x="272" y="140" width="96" height="5" fill="#111"/></g>`;
+    s += `<rect y="230" width="640" height="70" fill="#2a1c1c"/>` + smoke(80,210,0) + smoke(560,200,1);
+    const sg = ["DÉMISSION !","À BAS LA DETTE","REMBOURSEZ !"];
+    s += `<g class="a-adv">`;
+    for(let i = 0; i < 16; i++){ const x = 20 + i*40; s += guy(x, 290 - (i%2)*14, {up:i%2 === 0, cls:"a-jump", d:(i%5)*.1, sign:i%5 === 2 ? sg[(i/5|0)%3] : null}); if(i%4 === 0) s += em("🔥",x - 10,240 - (i%2)*14,22,"a-flick"); if(i%4 === 2) s += em("🛴",x + 14,248,20,"a-bob"); }
+    return s + `</g>`;
+  },
+  office(o){
+    const id = uid();
+    let s = bg("#efe6d2","#d8cbb0");
+    s += `<defs><clipPath id="${id}"><rect x="30" y="30" width="170" height="120"/></clipPath></defs><rect x="30" y="30" width="170" height="120" fill="#9fd3f5"/><g clip-path="url(#${id})">${city(150,"#b8c4d0","#e6eef5",false)}</g><rect x="30" y="30" width="170" height="120" fill="none" stroke="#8a6d4b" stroke-width="6"/>`;
+    s += `<rect x="390" y="30" width="210" height="130" fill="#fff" stroke="#bbb"/><text x="400" y="48" font-size="11" font-weight="800" fill="#333">DETTE PUBLIQUE</text><path d="M405 150 L440 140 L470 128 L500 120 L530 96 L560 70 L590 40" stroke="#d42a2f" stroke-width="3.5" fill="none" stroke-dasharray="260" class="a-draw"/>`;
+    s += `<g transform="translate(300 62)"><circle r="24" fill="#fff" stroke="#8a6d4b" stroke-width="3"/><g class="a-spin" style="animation-duration:2s"><circle r="24" fill="none"/><line x1="0" y1="0" x2="0" y2="-18" stroke="#222" stroke-width="2.5"/></g></g>`;
+    s += pres(o.ch,320,236,1.25,o.mood || "neutral","suit","a-bob");
+    s += `<rect x="110" y="214" width="420" height="12" fill="#946437"/><rect x="120" y="226" width="400" height="80" fill="#7a5230"/>`;
+    s += `<rect x="180" y="188" width="40" height="26" rx="3" fill="#333"/><rect x="184" y="192" width="32" height="9" fill="#9fe39f"/><text x="200" y="200" font-size="7" font-weight="800" text-anchor="middle" fill="#c62828">ERROR</text>` + smoke(200,184,0,"#777777");
+    s += em("☎️",440,212,30,"a-shake");
+    for(let i = 0; i < 5; i++) s += em("📄",150 + i*90,200 - (i%2)*40,18,"a-paper",-i*.6);
+    return s;
+  },
+  seine(o){
+    let s = bg("#a7d8f5","#eaf7ff") + cloud(500,50,.8,"a-cloud") + city(120,"#d9ccb4","#a9bccc",false);
+    s += `<path d="M0 150 L0 116 L640 116 L640 150 L560 150 A70 34 0 0 0 420 150 L360 150 A70 34 0 0 0 220 150 L160 150 A70 34 0 0 0 20 150Z" fill="#c9b99a"/>`;
+    s += `<rect y="150" width="640" height="150" fill="#5f7f5a"/><g class="a-wave">${waves(160,"#cfe3c7",.6)}${waves(204,"#a9c7a0",.5)}${waves(256,"#a9c7a0",.4)}</g>`;
+    s += em("🚢",-40,190,40,"a-drive",-3,"16s");
+    s += `<g class="a-bob">${presHead(o.ch,320,214,74,o.mood || "panic")}</g>` + em("💦",270,240,26,"a-pulse") + em("💦",372,240,26,"a-pulse",.3);
+    s += em("🐀",-30,274,24,"a-drive",-5,"11s") + `<g transform="rotate(-30 490 272)"><text x="490" y="272" font-size="28">🛴</text></g>`;
+    return s;
+  },
+  heat(o){
+    let s = bg("#ff8f3a","#ffd27a");
+    s += `<circle cx="520" cy="70" r="70" fill="#fff3a0" opacity=".25" class="a-pulse" style="animation-delay:.5s"/><circle cx="520" cy="70" r="50" fill="#fff3a0" class="a-pulse"/>`;
+    s += city(230,"#e0a070","#f3c590",false) + `<rect y="230" width="640" height="70" fill="#c98a5a"/>`;
+    s += `<g class="a-bob" style="animation-duration:1.5s">${waves(124,"#fff",.25)}${waves(156,"#fff",.2)}</g>`;
+    s += `<rect x="60" y="60" width="26" height="170" rx="13" fill="#fff" stroke="#999"/><circle cx="73" cy="236" r="20" fill="#e53935"/><rect x="66" y="80" width="14" height="150" fill="#e53935" class="a-grow"/><text x="100" y="84" font-family="Anton,Impact,sans-serif" font-size="30" fill="#b71c1c" class="a-blink2">46 °C</text>`;
+    s += pres(o.ch,320,282,1.2,"panic","suit","a-bob");
+    for(let i = 0; i < 6; i++) s += guy(420 + i*36, 292, {cls:"a-bob", d:i*.1}) + em("💦",432 + i*36,250,14,"a-float",-i*.4);
+    s += em("🍦",200,282,40,"a-melt") + em("🩴",250,294,24);
+    return s;
+  },
+  plane(o){
+    let s = bg("#4aa3f0","#d2ecff");
+    for(let i = 0; i < 4; i++) s += cloud(120 + i*170, 60 + (i%2)*130, .9, "a-cloud", -i*3);
+    s += `<g class="a-fly2"><line x1="-200" y1="152" x2="60" y2="152" stroke="#fff" stroke-width="6" opacity=".6"/><polygon points="150,150 210,108 236,108 196,150" fill="#9aa4b2"/><ellipse cx="180" cy="152" rx="120" ry="22" fill="#fff"/><path d="M62 150 L44 110 L74 110 L98 146Z" fill="#1f3c8f"/><rect x="58" y="114" width="10" height="10" fill="#fff"/><rect x="60" y="124" width="10" height="10" fill="#d42a2f"/><polygon points="150,156 210,198 236,198 196,156" fill="#8a94a2"/><rect x="80" y="157" width="210" height="5" fill="#1f3c8f"/><rect x="80" y="162" width="210" height="4" fill="#d42a2f"/>${Array.from({length:9},(_,i) => `<circle cx="${110+i*18}" cy="146" r="3.5" fill="#6aa9de"/>`).join("")}<text x="190" y="138" font-size="8" font-weight="800" fill="#1f3c8f" text-anchor="middle">RÉPUBLIQUE FRANÇAISE</text>${presHead(o.ch,286,140,30,"happy")}</g>`;
+    return s;
+  }
+};
+
+// Ambiance par défaut de chaque scène
+const PLACES = {riot:"Paris · place de la Nation", march:"Paris · Bastille", money:"Bercy", office:"Palais de l’Élysée", concert:"Cour de l’Élysée", luxury:"Salle des fêtes de l’Élysée", tv:"Plateau télé", road:"Boulevard périphérique", nuclear:"Flamanville", eiffel:"Champ-de-Mars", sea:"Océan Atlantique", seine:"Paris · la Seine", heat:"Paris · 46 °C à l’ombre", plane:"Au-dessus de l’Atlantique", party:"Champs-Élysées", sinking:"Quelque part en Atlantique", revolution:"Faubourg Saint-Honoré", assembly:"Assemblée nationale", beach:"La plage"};
+const BEACH_PLACE = {macron:"Fort de Brégançon", melenchon:"Plage des Catalans, Marseille", lepen:"Côte d’Émeraude"};
+
+// Scène jouée pour chaque option de chaque carte (dans l'ordre des options)
+const SC = {
+  "Le cadeau aux « premiers de cordée »":["luxury","sea","office"],
+  "Le service de vaisselle de l’Élysée":["luxury","beach","office"],
+  "Retraites : le retour du retour":["assembly","party","office"],
+  "Dissolution surprise":["assembly","assembly","office"],
+  "« Traverser la rue »":["tv","money","party"],
+  "« Quoi qu’il en coûte », la suite":["money","money","office"],
+  "Le Premier ministre démissionne (encore)":["office","office","tv"],
+  "France 2030 : la licorne d’État":["money","tv","tv"],
+  "Le nucléaire, en même temps":["nuclear","nuclear","eiffel"],
+  "Assurance chômage, réforme n°8":["office","office","money"],
+  "Concours d’anecdotes avec des youtubeurs":["tv","tv","tv"],
+  "La retraite à 60 ans":["party","party","office"],
+  "Le SMIC à 1 600 € net":["party","money","office"],
+  "Le blocage des prix":["office","riot","office"],
+  "« La République, c’est moi ! »":["tv","concert","office"],
+  "La VIe République":["assembly","tv","assembly"],
+  "Plan A, plan B : les traités européens":["money","tv","office"],
+  "Nationaliser les autoroutes":["money","road","office"],
+  "La France, puissance maritime":["sea","sea","sea"],
+  "Le revenu maximum":["money","plane","sea"],
+  "La semaine de 32 heures":["party","beach","office"],
+  "Les hologrammes":["tv","tv","concert"],
+  "La TVA sur l’énergie":["road","money","office"],
+  "Les moins de 30 ans exonérés d’impôt":["party","money","office"],
+  "Frexit ? Non. Oui. Peut-être.":["money","money","tv"],
+  "Jordan sur TikTok":["tv","tv","tv"],
+  "Les chats de l’Élysée":["office","party","assembly"],
+  "La justice frappe à la porte":["tv","money","tv"],
+  "Le référendum permanent":["office","office","assembly"],
+  "Le prêt d’une banque étrangère":["money","money","office"],
+  "Retraites : promesse ou réalité ?":["party","party","office"],
+  "Privatiser l’audiovisuel public":["tv","tv","tv"],
+  "Le protectionnisme « intelligent »":["money","office","road"],
+  "La taxe carbone sur le gazole":["road","money","road"],
+  "Supprimer deux jours fériés":["office","office","party"],
+  "La taxe Zucman":["money","sea","luxury"],
+  "Les tracteurs sur le périph’":["road","road","party"],
+  "Les agences de notation s’impatientent":["office","tv","luxury"],
+  "Se baigner dans la Seine":["seine","seine","seine"],
+  "Pénurie de moutarde":["office","office","office"],
+  "Panique aux punaises de lit":["money","tv","office"],
+  "Casse du siècle au Louvre":["luxury","office","money"],
+  "Droits de douane américains":["office","luxury","money"],
+  "Grève SNCF à Noël":["money","march","road"],
+  "L’hôpital craque":["money","office","office"],
+  "Réforme de l’école n°43":["office","office","office"],
+  "L’emprunt du siècle":["money","money","tv"],
+  "Les dîners du ministre":["luxury","luxury","office"],
+  "Canicule de juillet":["heat","heat","heat"],
+  "Crise de l’énergie":["money","tv","office"],
+  "Bruxelles hausse le ton":["office","tv","luxury"],
+  "La Tour Eiffel à vendre ?":["eiffel","eiffel","eiffel"],
+  "La baguette à 2 €":["party","riot","luxury"],
+  "« Bloquons tout » : le retour":["march","party","tv"],
+  "Vendre les bijoux de famille":["money","office","money"],
+  "Le nouvel avion présidentiel":["plane","plane","plane"],
+  "L’IA dans l’administration":["office","tv","office"],
+  "Les JO d’hiver 2030":["money","money","plane"],
+  "La Fête de la musique à l’Élysée":["concert","concert","office"],
+  "Les vacances d’été à l’Élysée":["beach","beach","sea"],
+  "La grande finale":["plane","concert","party"]
+};
+function sceneFor(card, i){ if(card.budget) return ["office","money","assembly","tv"][i]; const a = SC[card.title]; return (a && a[i]) || "office"; }
+function sceneOpts(name, card, i, b, a, caption){
+  const o = {caption};
+  if(name === "money"){ const d = a.dette - b.dette; o.sign = (d >= 0 ? "+" : "−") + fmtMd(Math.abs(d)); }
+  if(name === "beach") o.place = BEACH_PLACE[S.char];
+  if(name === "eiffel") o.v = i;
+  if(name === "road") o.v = /tracteur|agricult/i.test(card.title) ? "tractors" : "cars";
+  if(name === "assembly") o.sign = /dissol/i.test(card.title) ? "DISSOLUTION" : /49\.3/.test(card.options[i].t) ? "49.3 !" : card.budget ? "BUDGET ?!" : "BROUHAHA";
+  if(name === "concert") o.sign = /musique/i.test(card.title) ? "FÊTE DE LA MUSIQUE" : /République/.test(card.title) ? "OPÉRA DE PARIS" : "CONCERT VIP";
+  if(name === "party") o.sign = /finale/i.test(card.title) ? "ALLEZ LES BLEUS !" : a.pop > b.pop ? "ON T’AIME !" : "VIVE LA FRANCE !";
+  if(name === "tv") o.views = nf1.format(rnd(2, 40)) + " M";
+  if(name === "riot") o.place = "Paris · " + pick(["place de la Nation","Champs-Élysées","place de la République","rue de Rivoli"]);
+  return o;
+}
+
+// Manifestations : décor et pancartes
+const MANIF_LOOK = {
+  retraites:["march",{sign:"NON À LA RÉFORME !", balloon:"INTERSYNDICALE"}], gj:["march",{sign:"GILETS JAUNES · ACTE " , balloon:"GILETS JAUNES"}],
+  agri:["road",{v:"tractors"}], taxis:["road",{v:"cars", sign:"TAXIS EN COLÈRE · ROISSY BLOQUÉ"}],
+  bloquons:["march",{sign:"ON BLOQUE TOUT !", balloon:"BLOQUONS TOUT"}], profs:["march",{sign:"PROFS EN COLÈRE", balloon:"ÉDUCATION"}],
+  fonctionnaires:["march",{sign:"SERVICE PUBLIC EN DANGER", balloon:"FONCTION PUBLIQUE"}], etudiants:["march",{sign:"LA FAC EN GRÈVE", balloon:"ÉTUDIANTS"}],
+  medecins:["march",{sign:"MÉDECINS À BOUT", balloon:"SANTÉ"}]
+};
+function manifLook(type, extra){ const m = MANIF_LOOK[type] || MANIF_LOOK.bloquons; const o = Object.assign({}, m[1], extra); if(type === "gj") o.sign = "GILETS JAUNES · ACTE " + S.acte; return [m[0], o]; }
+
+// Réactions du chef de l'État (contentes quand la France coule, paniquées quand elle va mieux)
+function moodFor(b, a){ const g = (a.dette - b.dette)/25 + (b.pop - a.pop)/3 + (a.col - b.col)/12 - (a.ass - b.ass)/30; return g > 2.2 ? "happy" : g > .4 ? "smug" : g < -1 ? "panic" : "neutral"; }
+const QUIPS = {
+  happy:{all:["Parfait. Tout se passe exactement comme prévu.","Magnifique ! La France prend l’eau à vue d’œil.","Ah, l’odeur de la faillite au petit matin…"], macron:["C’est ce qu’on appelle une réforme disruptive.","Je l’assume pleinement. En même temps."], melenchon:["Le bruit et la fureur, camarades !","Ils hurlent ? Excellent, je hurle plus fort !"], lepen:["Jordan, filme ma tête de victoire.","Mes chats sont très fiers de moi."]},
+  smug:{all:["Pas mal. Ça avance.","Petit à petit, le navire penche.","Bercy fait une drôle de tête. J’adore."]},
+  neutral:{all:["Hmm. Pas spectaculaire.","On peut faire pire. On DOIT faire pire.","Bof. La France tient encore debout."]},
+  panic:{all:["Quoi ?! Ils commencent à m’apprécier ?!","Non, non, non… les comptes s’améliorent !","Horreur : une bonne nouvelle."], macron:["Comment ça, « bilan positif » ?!"], melenchon:["Trahison ! La dette baisse !"], lepen:["Bruxelles me félicite. Je vais m’évanouir."]},
+  angry:{all:["Inadmissible !","Qui a eu cette idée ? Ah. C’est moi."]},
+  shout:{all:["LA RÉPUBLIQUE, C’EST MOI !!!","JE SUIS LE PEUPLE ! ET LE PEUPLE CRIE !"]}
+};
+function quip(m){ const q = QUIPS[m] || QUIPS.neutral; return pick([...(q.all || []), ...((S && q[S.char]) || [])]); }
+
+// Bruitages synthétisés (aucun fichier son)
+let AC = null;
+function audio(){ if(!S || !S.sound) return null; try{ AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if(AC.state === "suspended") AC.resume(); }catch(e){ AC = null; } return AC; }
+function beep(f, t, dur, type = "sine", vol = .05, f2 = null){
+  const a = audio(); if(!a) return;
+  const o = a.createOscillator(), g = a.createGain(), t0 = a.currentTime + t;
+  o.type = type; o.frequency.setValueAtTime(f, t0); if(f2) o.frequency.linearRampToValueAtTime(f2, t0 + dur);
+  g.gain.setValueAtTime(vol, t0); g.gain.exponentialRampToValueAtTime(.0001, t0 + dur);
+  o.connect(g).connect(a.destination); o.start(t0); o.stop(t0 + dur + .05);
+}
+function noise(t, dur, freq = 800, vol = .08, q = .8){
+  const a = audio(); if(!a) return;
+  const len = Math.floor(a.sampleRate * dur), buf = a.createBuffer(1, len, a.sampleRate), d = buf.getChannelData(0);
+  for(let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+  const src = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain(), t0 = a.currentTime + t;
+  src.buffer = buf; f.type = "bandpass"; f.frequency.value = freq; f.Q.value = q;
+  g.gain.setValueAtTime(.0001, t0); g.gain.linearRampToValueAtTime(vol, t0 + dur * .2); g.gain.linearRampToValueAtTime(.0001, t0 + dur);
+  src.connect(f).connect(g).connect(a.destination); src.start(t0);
+}
+const SFX = {
+  siren(){ for(let i = 0; i < 3; i++){ beep(660, i*.8, .4, "sawtooth", .025, 960); beep(960, i*.8 + .4, .4, "sawtooth", .025, 660); } noise(0, 2.2, 600, .05); },
+  crowd(){ noise(0, 2.2, 700, .09, .5); },
+  cheer(){ noise(0, 1.8, 1500, .08, .6); [523,659,784,1047].forEach((f,i) => beep(f, i*.12, .25, "triangle", .04)); },
+  cash(){ beep(1318, 0, .08, "square", .04); beep(1760, .09, .25, "square", .04); noise(.05, .2, 4000, .05, 2); },
+  gavel(){ [0,.35,.7].forEach(t => { beep(140, t, .15, "square", .08, 60); noise(t, .08, 300, .1, 1); }); },
+  music(){ [262,330,392,523,392,330,262,392].forEach((f,i) => { beep(f, i*.15, .14, "square", .03); beep(f/2, i*.15, .14, "triangle", .05); }); },
+  wave(){ noise(0, 2.5, 400, .06, .3); noise(1, 2.2, 500, .05, .3); },
+  splash(){ noise(0, .6, 1200, .12, .7); beep(400, 0, .3, "sine", .04, 120); },
+  boo(){ beep(180, 0, 1.2, "sawtooth", .03, 110); noise(0, 1.2, 350, .06); },
+  jingle(){ [784,988,1175,1568].forEach((f,i) => beep(f, i*.1, .18, "triangle", .05)); },
+  horn(){ beep(330, 0, .35, "square", .03); beep(392, 0, .35, "square", .03); beep(330, .5, .25, "square", .03); },
+  jet(){ noise(0, 2, 900, .07, .4); },
+  hum(){ beep(110, 0, 1.5, "sawtooth", .02); },
+  phone(){ for(let i = 0; i < 4; i++){ beep(1400, i*.18, .08, "square", .025); beep(1800, i*.18 + .09, .08, "square", .025); } }
+};
+const SCENE_SFX = {riot:"siren", march:"crowd", beach:"wave", concert:"music", money:"cash", assembly:"gavel", road:"horn", tv:"jingle", luxury:"cash", eiffel:"jingle", nuclear:"hum", party:"cheer", sea:"wave", sinking:"boo", revolution:"crowd", office:"phone", seine:"splash", heat:"hum", plane:"jet"};
+function sfx(n){ try{ if(SFX[n]) SFX[n](); }catch(e){} }
+
+// Une « mini-vidéo » : scène SVG animée habillée comme un direct télé
+function clip(name, o = {}){
+  const fn = SCENES[name] || SCENES.office;
+  const opts = Object.assign({ch:S ? S.char : "macron", mood:"neutral"}, o);
+  setTimeout(() => sfx(SCENE_SFX[name]), 80);
+  return `<div class="clip" role="img" aria-label="${esc(opts.caption || name)}"><svg viewBox="0 0 640 300" preserveAspectRatio="xMidYMid slice" font-family="Inter,system-ui,sans-serif">${fn(opts)}</svg><div class="live"><i></i>${esc(opts.label || "EN DIRECT")}</div><div class="place">📍 ${esc(opts.place || PLACES[name] || "Paris")}</div>${opts.caption ? `<div class="cap">${esc(opts.caption)}</div>` : ""}<div class="tlb"><i></i></div></div>`;
+}
+
+/* ---------------------------------------------------------------------
+   Utilitaires
+   --------------------------------------------------------------------- */
+const $ = s => document.querySelector(s);
+const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
+const rnd = (a,b) => a + Math.random()*(b-a);
+const pick = a => a[Math.floor(Math.random()*a.length)];
+const shuffle = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+const nf0 = new Intl.NumberFormat("fr-FR",{maximumFractionDigits:0});
+const nf1 = new Intl.NumberFormat("fr-FR",{minimumFractionDigits:1,maximumFractionDigits:1});
+const fmtEur = md => nf0.format(Math.floor(md*1e9)) + " €";
+const fmtMd = md => (Math.abs(md) >= 10 ? nf0.format(md) : nf1.format(md)) + " Md€";
+const sgn = (v,f) => (v>0?"+":v<0?"−":"") + f(Math.abs(v));
+const yearOf = i => 2027 + Math.floor((i+1)/4);
+const seasonOf = i => SEASONS[(1+i)%4];
+const dateOf = i => seasonOf(i) + " " + yearOf(i);
+const ratingIdx = r => RATINGS.findIndex(x => r < x[0]);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+let S = null;
+function ratio(){ return S.dette / S.pib * 100; }
+function taux(){ return RATINGS[ratingIdx(ratio())][2]; }
+function note(){ return RATINGS[ratingIdx(ratio())][1]; }
+function interestQ(){ return S.dette * taux() / 100 / 4; }
+function deficitYear(){ return (S.defPrim + interestQ()) * 4; }
+function ag(m,f){ return CHARS[S.char].g === "f" ? f : m; }
+
+function snap(){ return {dette:S.dette, ratio:ratio(), pop:S.pop, col:S.col, ass:S.ass, note:note(), ri:ratingIdx(ratio()), defY:deficitYear()}; }
+
+/* ---------------------------------------------------------------------
+   Moteur
+   --------------------------------------------------------------------- */
+function newGame(charKey){
+  const c = CHARS[charKey];
+  S = {char:charKey, turn:0, dette:DETTE0, pib:PIB0, defPrim:24, pop:c.pop, col:c.col, ass:c.ass,
+       pms:0, pmName:c.pm, pmDays:0, jokers:3, flag493:false, hist:[], log:[], news:[], acte:312,
+       lastManif:-9, busy:false, over:false, started:true, hints:loadPref("hints", true), sound:loadPref("sound", true)};
+  S.hist.push({ratio:ratio(), pop:S.pop});
+  S.deck = buildDeck(charKey);
+  S.news = ["Passation de pouvoir à l’Élysée : le nouveau locataire demande où sont rangées les cartes bleues de l’État",
+            "Dette publique : " + nf0.format(DETTE0) + " milliards d’euros, et ce n’est que le début",
+            "Les agences de notation « observent avec intérêt » l’arrivée de " + c.name];
+  updateTicker();
+  pushLog("Mai 2027", "Investiture de " + c.name + ". Le compteur de la dette tourne déjà.");
+  renderGame();
+}
+
+function buildDeck(charKey){
+  const own = shuffle(CARDS.filter(c => c.who === charKey && !c.first));
+  const shared = shuffle(CARDS.filter(c => c.who === "all"));
+  const first = CARDS.find(c => c.who === charKey && c.first);
+  const deck = []; let flip = false;
+  for(let i=0;i<TURNS;i++){
+    if(seasonOf(i) === "Automne"){ deck.push(budgetCard(i)); continue; }
+    if(i === 0){ deck.push(first); continue; }
+    flip = !flip;
+    deck.push((flip ? shared.pop() : own.pop()) || shared.pop() || own.pop());
+  }
+  return deck;
+}
+
+function applyE(e){
+  if(!e) return;
+  const c = S.char;
+  let d = e.d || 0; if(c === "macron" && d > 0) d *= 1.1;
+  S.dette += d;
+  S.defPrim += e.def || 0;
+  let p = e.pop || 0; if(c === "lepen" && p < 0) p *= 0.85;
+  S.pop = clamp(S.pop + p, 0, 100);
+  let k = e.col || 0; if(c === "melenchon" && k > 0) k *= 1.25;
+  S.col = clamp(S.col + k, 0, 100);
+  if(e.assSet != null) S.ass = e.assSet;
+  let a = e.ass || 0; if(a < 0 && S.flag493) a = 0;
+  S.ass = clamp(S.ass + a, 0, 100);
+}
+
+function endQuarter(){
+  const interest = interestQ(), t = taux();
+  const deficit = S.defPrim + interest;
+  S.dette += deficit;
+  // croissance : plombée par la colère et par des taux d'intérêt qui étranglent l'économie
+  S.pib *= 1 + (0.0065 - S.col * 0.00008 - Math.max(0, ratio() - 140) * 0.00005);
+  S.pop = clamp(S.pop + (32 - S.pop) * 0.05, 0, 100);   // les Français oublient (un peu)
+  S.col = clamp(S.col - 3, 0, 100);                      // la colère retombe (un peu)
+  S.ass = clamp(S.ass + 3, 0, 100);                      // l'Assemblée se calme (un peu)
+  S.pmDays += 91;
+  S.hist.push({ratio:ratio(), pop:S.pop});
+  return {interest, deficit, primary:S.defPrim, taux:t};
+}
+
+/* ---------------------------------------------------------------------
+   Rendu : accueil
+   --------------------------------------------------------------------- */
+function renderSelect(){
+  S = null;
+  $("#ticker").style.display = "none";
+  const best = loadPref("best", {});
+  $("#app").innerHTML = `
+  <div class="stripe"></div>
+  <main class="wrap">
+    <header class="hero">
+      <div class="kicker">République française · Ministère de la Faillite · Simulateur officieux</div>
+      <h1>Opération <span>Naufrage</span></h1>
+      <p class="lead">Mai 2027. Vous venez d’entrer à l’Élysée. Votre mission, si vous l’acceptez : <b>faire couler la France</b>. Dépensez sans compter, fâchez tout le monde, faites tomber vos Premiers ministres et regardez le compteur de la dette s’affoler.</p>
+      <div class="goals">
+        <div class="goal"><b>💸 Dette ≥ ${WIN_RATIO} % du PIB</b><span>Départ : ${nf0.format(DETTE0/PIB0*100)} %. La Grèce a dépassé les 200 % en 2020.</span></div>
+        <div class="goal"><b>👎 Popularité ≤ ${WIN_POP} %</b><span>Être détesté, mais vraiment. Les Français oublient vite : insistez.</span></div>
+        <div class="goal"><b>⏳ 20 trimestres</b><span>Un quinquennat complet, de l’été 2027 au printemps 2032.</span></div>
+      </div>
+      <details class="rules"><summary>Règles du jeu</summary>
+        <ul>
+          <li>Chaque trimestre, une décision. Beaucoup sont des <b>remakes de vraies décisions</b> (2017–2025), d’autres des <b>futurs possibles</b>.</li>
+          <li>La dette grossit toute seule : déficit + intérêts. Quand la note de la France baisse, les taux montent : <b>effet boule de neige</b>.</li>
+          <li>Les choix dépensiers sont souvent populaires, l’austérité fait baisser la popularité. Toute la difficulté est là : il faut <b>dépenser ET être détesté</b>.</li>
+          <li>Quand la colère monte, des <b>manifestations</b> éclatent : envoyez des CRS (combien ?), cédez, ou partez en vacances.</li>
+          <li>Si la patience de l’Assemblée tombe à zéro : <b>motion de censure</b>, votre Premier ministre tombe.</li>
+          <li>Chaque personnage a un <b>joker</b> utilisable trois fois.</li>
+          <li>⚠️ <b>Défaite immédiate</b> si votre popularité atteint 65 % (on vous aime, quelle horreur) ou si la dette repasse sous 100 % du PIB.</li>
+          <li>🔥 Si la colère sociale atteint 100 % : <b>révolution</b>. Fin de partie, avec un joli bonus.</li>
+        </ul>
+      </details>
+    </header>
+    <h2 class="sec">Choisissez votre personnage</h2>
+    <div class="chars">
+      ${Object.entries(CHARS).map(([k,c]) => `
+      <div class="char" style="--c:${c.color}">
+        <div class="top">${faceSVG(k, k === "melenchon" ? "shout" : "smug", 84)}
+          <div><div class="nick">${c.nick}</div><h3>${c.name}</h3><div class="diff">${c.diff}</div></div></div>
+        <p>${c.intro}</p>
+        <div class="trait">${c.trait}</div>
+        <div class="trait"><b>Joker ×3 : ${c.joker.icon} ${c.joker.name}</b><br>${c.joker.desc}</div>
+        <div class="best">Départ : popularité ${c.pop} % · colère ${c.col} %${best[k] ? ` · Meilleur score : <b>${nf0.format(best[k])}</b>` : ""}</div>
+        <button class="go" data-char="${k}">Jouer ${c.name.split(" ").slice(-2).join(" ")} →</button>
+      </div>`).join("")}
+    </div>
+    <p class="disclaimer">⚠️ Parodie humoristique. Les personnages sont des caricatures de personnalités publiques ; les situations sont exagérées ou inventées, même quand elles s’inspirent de faits réels. Les chiffres économiques sont des ordres de grandeur simplifiés. Toute ressemblance avec la réalité est, hélas, parfois voulue.</p>
+  </main>`;
+  document.querySelectorAll(".go").forEach(b => b.onclick = () => newGame(b.dataset.char));
+}
+
+/* ---------------------------------------------------------------------
+   Rendu : jeu
+   --------------------------------------------------------------------- */
+function hintChips(o){
+  const e = o.e || {}, rem = TURNS - S.turn, out = [];
+  const debt = (e.d||0) + (e.def||0) * rem;
+  if(debt >= 100) out.push(["💸💸💸 dette","good"]); else if(debt >= 25) out.push(["💸💸 dette","good"]); else if(debt >= 1.5) out.push(["💸 dette","good"]); else if(debt <= -1.5) out.push(["🪙 économies","bad"]);
+  const p = e.pop || 0;
+  if(p <= -10) out.push(["👎👎 impopulaire","good"]); else if(p < 0) out.push(["👎 impopulaire","good"]); else if(p >= 6) out.push(["👍👍 populaire","bad"]); else if(p > 0) out.push(["👍 populaire","bad"]);
+  if((e.col||0) >= 10) out.push(["🔥 colère","good"]); else if((e.col||0) <= -8) out.push(["🧊 apaisement","bad"]);
+  if((e.ass||0) <= -15 || (e.assSet!=null && e.assSet < 30)) out.push(["🏛️ chaos","good"]);
+  if(o.manif) out.push(["📢 manif","neu"]);
+  if(o.alt) out.push(["🎲 risqué","neu"]);
+  if(!out.length) out.push(["≈ pas grand-chose","neu"]);
+  return out.map(([t,c]) => `<span class="hint ${c}">${t}</span>`).join("");
+}
+
+function renderGame(){
+  const c = CHARS[S.char], card = S.deck[S.turn]; S.card = card;
+  const r = ratio(), ri = ratingIdx(r);
+  const prog = clamp((r - 100) / (WIN_RATIO - 100) * 100, 0, 100);
+  const defPct = deficitYear() / S.pib * 100;
+  const isReal = !/futur/i.test(card.src);
+  const objDebt = r >= WIN_RATIO, objPop = S.pop <= WIN_POP;
+  $("#ticker").style.display = "flex";
+  $("#app").innerHTML = `
+  <div class="stripe"></div>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">Opération <span>Naufrage</span></div>
+      <div class="turninfo"><span class="pill">${dateOf(S.turn)}</span><span class="muted">Trimestre ${S.turn+1} / ${TURNS}</span><button class="sound" id="snd">${S.sound ? "🔊 Son" : "🔇 Muet"}</button></div>
+      <div class="me">${faceSVG(S.char, "neutral", 42)}<div><b>${c.name}</b><small>${c.nick} · PM : ${esc(S.pmName)}</small></div></div>
+    </div>
+    <div class="progress">${Array.from({length:TURNS},(_,i)=>`<i class="${i<S.turn?"done":i===S.turn?"now":""}"></i>`).join("")}</div>
+
+    <section class="stats">
+      <div class="tile big">
+        <div class="tl">Dette publique (en direct)</div>
+        <div class="num" id="detteLive">${fmtEur(S.dette)}</div>
+        <div class="sub"><b>${nf1.format(r)} % du PIB</b> · <span id="perSec">+${nf0.format(deficitYear()*1e9/31536000)} € par seconde</span></div>
+        <div class="bar" style="--fill:var(--red)"><i style="width:${prog}%"></i><em class="end" style="left:calc(100% - 2px)" data-l="objectif ${WIN_RATIO} %"></em></div>
+      </div>
+      <div class="tile ${S.pop>=55?"warn":""}">
+        <div class="tl">Popularité</div>
+        <div class="num">${nf0.format(S.pop)} %</div>
+        <div class="sub">${S.pop<=WIN_POP?"Détesté(e) : parfait":S.pop>=55?"⚠️ Danger : on vous aime":"Encore trop aimé(e)"}</div>
+        <div class="bar" style="--fill:var(--blue)"><i style="width:${S.pop}%"></i><em style="left:${WIN_POP}%" data-l="${WIN_POP} %"></em></div>
+      </div>
+      <div class="tile">
+        <div class="tl">Colère sociale</div>
+        <div class="num">${nf0.format(S.col)} %</div>
+        <div class="sub">${S.col>=80?"🔥 Révolution en vue":S.col>=45?"Ça gronde dans la rue":"Les Français ronchonnent"}</div>
+        <div class="bar nolbl" style="--fill:var(--gold)"><i style="width:${S.col}%"></i></div>
+      </div>
+      <div class="tile ${S.ass<=20?"warn":""}">
+        <div class="tl">Patience de l’Assemblée</div>
+        <div class="num">${nf0.format(S.ass)} %</div>
+        <div class="sub">${S.ass<=20?"⚠️ Censure imminente":"PM tombés : "+S.pms}</div>
+        <div class="bar nolbl"><i style="width:${S.ass}%"></i></div>
+      </div>
+      <div class="tile">
+        <div class="tl">Note de la France</div>
+        <div class="num">${RATINGS[ri][1]}</div>
+        <div class="sub">Taux moyen ${nf1.format(RATINGS[ri][2])} % · Déficit ${nf1.format(defPct)} % du PIB</div>
+      </div>
+    </section>
+
+    <div class="layout">
+      <article class="card">
+        <div class="cardhead"><span class="src ${isReal?"real":"fut"}">${isReal?"📜 ":""}${card.src}</span><span class="muted">Décision n°${S.turn+1}</span></div>
+        <div class="cardtop">${faceSVG(S.char, r >= 175 ? "happy" : S.pop >= 55 ? "panic" : S.pop <= WIN_POP ? "smug" : "neutral", 64)}<h2>${card.title}</h2></div>
+        <p class="txt">${card.text}</p>
+        <div class="jokerbar">
+          <button class="joker" id="joker" ${S.jokers<=0||S.flag493?"disabled":""}>${c.joker.icon} ${c.joker.name} · ×${S.jokers}</button>
+          ${S.flag493?`<span class="armed">⚡ 49.3 armé : cette décision ne coûtera aucune patience à l’Assemblée.</span>`:`<small>${c.joker.desc}</small>`}
+        </div>
+        <div class="opts">
+          ${card.options.map((o,i)=>`<button class="opt" data-i="${i}"><span class="k">${i+1}</span><span class="ot">${o.t}</span>${S.hints?`<span class="hints">${hintChips(o)}</span>`:"<span></span>"}</button>`).join("")}
+        </div>
+      </article>
+      <aside class="side">
+        <div class="panel">
+          <h4>Objectifs</h4>
+          <div class="objline"><span>💸 Dette ≥ ${WIN_RATIO} % du PIB</span><span class="${objDebt?"ok":"ko"}">${objDebt?"✔":nf0.format(r)+" %"}</span></div>
+          <div class="objline"><span>👎 Popularité ≤ ${WIN_POP} %</span><span class="${objPop?"ok":"ko"}">${objPop?"✔":nf0.format(S.pop)+" %"}</span></div>
+          <div class="objline"><span>🏛️ Premiers ministres tombés</span><span>${S.pms}</span></div>
+          <div class="objline"><span>📈 Dette ajoutée</span><span>${sgn(S.dette-DETTE0,fmtMd)}</span></div>
+          <hr style="border:0;border-top:1px solid var(--line);margin:10px 0">
+          <label class="toggle"><input type="checkbox" id="hintsT" ${S.hints?"checked":""}> Afficher les indices sur les choix</label>
+        </div>
+        <div class="panel">
+          <h4>Journal du mandat</h4>
+          <ul class="log">${S.log.slice().reverse().slice(0,14).map(l=>`<li><b>${l.d}</b>${esc(l.t)}</li>`).join("")}</ul>
+        </div>
+        <button class="btn alt" id="quit">Abandonner et changer de personnage</button>
+      </aside>
+    </div>
+  </div>`;
+  document.querySelectorAll(".opt").forEach(b => b.onclick = () => choose(+b.dataset.i));
+  $("#joker").onclick = useJoker;
+  $("#snd").onclick = () => { S.sound = !S.sound; savePref("sound", S.sound); renderGame(); if(S.sound) sfx("jingle"); };
+  $("#hintsT").onchange = e => { S.hints = e.target.checked; savePref("hints", S.hints); renderGame(); };
+  $("#quit").onclick = e => { const b = e.currentTarget; if(b.dataset.sure){ renderSelect(); return; } b.dataset.sure = "1"; b.textContent = "Vraiment ? Cliquez encore pour abandonner"; };
+}
+
+function pushLog(d, t){ S.log.push({d, t}); }
+function addNews(t){ if(!t) return; S.news.unshift(t); S.news = S.news.slice(0, 8); updateTicker(); }
+function updateTicker(){
+  const run = $("#tickrun"); if(!run || !S) return;
+  run.innerHTML = S.news.map(n => `<span>${esc(n)}</span>`).join("");
+  run.style.setProperty("--dur", Math.max(35, S.news.join(" ").length * 0.16) + "s");
+  run.style.animation = "none"; void run.offsetWidth; run.style.animation = "";
+}
+
+/* ---------------------------------------------------------------------
+   Décisions
+   --------------------------------------------------------------------- */
+function choose(i){
+  if(S.busy || S.over) return;
+  S.busy = true;
+  const card = S.card, o = card.options[i];
+  let e = o.e, r = o.r, n = o.n;
+  if(o.alt && Math.random() < o.alt.p){ e = o.alt.e; r = o.alt.r; n = o.alt.n || n; }
+  const before = snap();
+  applyE(e);
+  S.flag493 = false;
+  const eco = endQuarter();
+  let ev = null;
+  if(Math.random() < 0.45){ ev = pick(NEWS); applyE(ev.e); addNews(ev.t); }
+  addNews(n);
+  pushLog(dateOf(S.turn), n || card.title);
+  let manif = o.manif || null;
+  if(!manif && o.manifChance && Math.random() < o.manifChance) manif = o.manifType;
+  S.pendingManif = manif;
+  const after = snap(), sc = sceneFor(card, i);
+  showResult({kicker:"Décision · " + dateOf(S.turn), title:o.t, text:r, before, after, eco, ev, scene:[sc, sceneOpts(sc, card, i, before, after, n)], onContinue:postTurn});
+}
+
+function useJoker(){
+  if(S.busy || S.over || S.jokers <= 0 || S.flag493) return;
+  S.busy = true;
+  const j = CHARS[S.char].joker, before = snap();
+  S.jokers--;
+  applyE(j.e);
+  if(S.char === "macron") S.flag493 = true;
+  addNews(j.toast.replace(/^\S+\s/, ""));
+  pushLog(dateOf(S.turn), "Joker : " + j.name);
+  const scene = {
+    macron:["assembly",{sign:"49.3 !", caption:"Le 49.3 est dégainé : débat terminé"}],
+    melenchon:["tv",{mood:"shout", caption:"« La République, c’est moi ! »"}],
+    lepen:["money",{mood:"angry", sign:"AMENDE : 15 Md€", caption:"Bruxelles inflige une amende pour insolence"}]
+  }[S.char];
+  showResult({kicker:"Joker · " + dateOf(S.turn), title:j.icon + " " + j.name, text:j.toast.replace(/^\S+\s/, ""), before, after:snap(), scene, mood:S.char === "melenchon" ? "shout" : "smug",
+    onContinue:() => {
+      closeModal();
+      if(checkEnd()) return;
+      if(S.ass <= 0) return showCensure(() => { closeModal(); S.busy = false; renderGame(); });
+      S.busy = false; renderGame();
+    }});
+}
+
+function postTurn(){
+  closeModal();
+  if(checkEnd()) return;
+  if(S.ass <= 0) return showCensure(afterCensure);
+  afterCensure();
+}
+function afterCensure(){
+  closeModal();
+  if(checkEnd()) return;
+  let m = S.pendingManif; S.pendingManif = null;
+  if(!m && S.turn - S.lastManif >= 2 && Math.random() < Math.min(0.6, (S.col - 30) / 90)) m = pick(RANDOM_MANIFS);
+  if(m){ S.lastManif = S.turn; return showManif(m, finishTurn); }
+  finishTurn();
+}
+function finishTurn(){
+  closeModal();
+  if(checkEnd()) return;
+  S.turn++;
+  if(S.turn >= TURNS) return endGame("term");
+  S.busy = false;
+  renderGame();
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+function checkEnd(){
+  const r = ratio();
+  if(r >= WIN_RATIO && S.pop <= WIN_POP){ endGame("win"); return true; }
+  if(S.col >= 100){ endGame("revolution"); return true; }
+  if(S.pop >= 65){ endGame("adored"); return true; }
+  if(r < 100){ endGame("austerity"); return true; }
+  return false;
+}
+
+/* ---------------------------------------------------------------------
+   Modales
+   --------------------------------------------------------------------- */
+function openModal(html){ $("#modal").innerHTML = html; $("#overlay").classList.remove("hidden"); $("#modal").scrollTop = 0; }
+function closeModal(){ $("#overlay").classList.add("hidden"); $("#modal").innerHTML = ""; }
+
+function deltaChips(b, a){
+  const items = [
+    ["Dette", a.dette - b.dette, v => fmtMd(v), true, 0.05],
+    ["Dette/PIB", a.ratio - b.ratio, v => nf1.format(v) + " pt", true, 0.05],
+    ["Popularité", a.pop - b.pop, v => nf1.format(v) + " pt", false, 0.05],
+    ["Colère", a.col - b.col, v => nf1.format(v) + " pt", true, 0.05],
+    ["Assemblée", a.ass - b.ass, v => nf1.format(v) + " pt", false, 0.05]
+  ];
+  return items.filter(x => Math.abs(x[1]) >= x[4]).map(([l,v,f,upGood]) => {
+    const good = upGood ? v > 0 : v < 0;
+    return `<span class="chip ${good?"good":"bad"}">${l} ${sgn(v,f)}</span>`;
+  }).join("");
+}
+
+function ratingAlert(b, a){
+  if(a.ri > b.ri) return `<div class="alert g">📉 ${pick(AGENCIES)} dégrade la France : <b>${b.note} → ${a.note}</b>. ${pick(["Les taux d’intérêt grimpent. Bravo.","Bercy pleure, vous souriez.","Le Portugal nous regarde de haut.","La boule de neige grossit."])}</div>`;
+  if(a.ri < b.ri) return `<div class="alert">📈 Horreur : la note de la France remonte (${b.note} → ${a.note}). Les marchés reprennent confiance.</div>`;
+  return "";
+}
+
+function showResult({kicker, title, text, before, after, eco, ev, scene, mood, onContinue}){
+  mood = mood || moodFor(before, after);
+  openModal(`
+    ${scene ? clip(scene[0], Object.assign({mood}, scene[1])) : ""}
+    <div class="kicker">${kicker}</div>
+    <h3>${title}</h3>
+    <div class="react">${faceSVG(S.char, mood, 58)}<div class="bubble">${esc(quip(mood))}</div></div>
+    <p class="txt">${text}</p>
+    <div class="chips">${deltaChips(before, after) || '<span class="chip bad">Rien n’a bougé. Décevant.</span>'}</div>
+    <div class="legend">Vert = bon pour votre mission (faire couler la France). Rouge = la France va mieux, hélas.</div>
+    ${ratingAlert(before, after)}
+    ${ev ? `<div class="box"><b class="t">Pendant ce temps…</b>${ev.t}${ev.c ? " " + ev.c : ""}</div>` : ""}
+    ${eco ? `<div class="box"><b class="t">Le trimestre à Bercy</b>Déficit du trimestre : <b>${fmtMd(eco.deficit)}</b>, dont <b>${fmtMd(eco.interest)}</b> d’intérêts de la dette (taux moyen ${nf1.format(eco.taux)} %).</div>` : ""}
+    <div class="btnrow"><button class="btn" id="cont">Continuer →</button></div>`);
+  $("#cont").onclick = onContinue;
+  $("#cont").focus();
+}
+
+function showCensure(done){
+  const votes = 289 + Math.floor(rnd(1, 70));
+  const old = S.pmName, days = Math.max(14, S.pmDays);
+  S.pms++;
+  const before = snap();
+  applyE({pop:-3, d:4});
+  S.ass = 55;
+  let next = pick(PM_NAMES.filter(n => n !== old));
+  S.pmName = next; S.pmDays = 0;
+  addNews(`Censure : le gouvernement de ${old} renversé par ${votes} voix`);
+  pushLog(dateOf(S.turn), `Motion de censure : ${old} tombe. ${next} nommé(e) à Matignon.`);
+  openModal(`
+    ${clip("assembly", {sign:"CENSURE !", caption:`Le gouvernement de ${old} est renversé`})}
+    <div class="kicker">🏛️ Assemblée nationale · Remake de décembre 2024</div>
+    <div class="react">${faceSVG(S.char, "angry", 58)}<div class="bubble">${esc(quip("angry"))}</div></div>
+    <h3>Motion de censure adoptée !</h3>
+    <p class="txt">Par <b>${votes} voix</b>, l’Assemblée renverse le gouvernement de <b>${esc(old)}</b>, après ${days} jours de fonctions. C’est le <b>${S.pms}${S.pms===1?"er":"e"} Premier ministre</b> à tomber sous votre mandat. Faute de budget, la France passe en « loi spéciale ».</p>
+    <p class="txt">Vous nommez <b>${esc(next)}</b>. ${pick(["Il/elle apprend sa nomination en sortant de la douche.","Le carton de déménagement de son prédécesseur est encore dans le couloir.","Les paris en ligne donnent son départ à 3 contre 1 avant Noël.","La passation de pouvoir dure 4 minutes. Personne n’a retiré son manteau."])}</p>
+    <div class="chips">${deltaChips(before, snap())}</div>
+    <div class="btnrow"><button class="btn" id="cont">Continuer →</button></div>`);
+  $("#cont").onclick = done;
+  $("#cont").focus();
+}
+
+function showManif(type, done){
+  const M = MANIFS[type];
+  const title = M.title.replace("{n}", ++S.acte);
+  const cgt = Math.round((60000 + S.col * 16000 + rnd(0, 250000)) * M.size / 1000) * 1000;
+  const police = Math.round(cgt / rnd(3.2, 5) / 100) * 100;
+  const needed = Math.max(1500, Math.round(police / 12 * M.mult / 500) * 500);
+  const c = S.char;
+  const special = {
+    macron:{label:"Lancer un Grand Débat national", sub:"7 heures de monologue devant 600 maires", e:{d:0.3,pop:1,col:-15}, r:"Vous parlez 7 heures sans pause devant 600 maires. Trois se sont évanouis, deux ont démissionné, la manif s’est endormie."},
+    melenchon:{label:"Prendre la tête du cortège", sub:"Manifester contre votre propre gouvernement", e:{pop:2,col:15,ass:-10}, r:"Vous manifestez contre votre propre gouvernement, mégaphone à la main. Un concept. La foule double."},
+    lepen:{label:"Envoyer Jordan faire un TikTok", sub:"12 millions de vues, 0 solution", e:{pop:-2,col:6}, r:"Il filme une vidéo devant les manifestants avec un filtre chiot. 12 millions de vues, zéro solution, beaucoup de colère."}
+  }[c];
+  const vacances = {macron:"Vous partez au Touquet.", melenchon:"Vous ne pouvez pas ignorer une manif, c’est contre-nature. Vous y allez en cachette, avec une fausse moustache.", lepen:"Vous partez nourrir vos chats à Saint-Cloud."}[c];
+  const look = manifLook(type, {caption:"Le cortège approche"});
+  openModal(`
+    ${clip(look[0], look[1])}
+    <div class="kicker">📢 Manifestation · ${dateOf(S.turn)}</div>
+    <h3>${M.icon} ${title}</h3>
+    <p class="txt">${M.flavor}</p>
+    <div class="crowd">
+      <div><div class="tl">Selon les syndicats</div><div class="num">${nf0.format(cgt)}</div></div>
+      <div><div class="tl">Selon la police</div><div class="num">${nf0.format(police)}</div></div>
+    </div>
+    <div class="box"><b class="t">Note du préfet</b>Pour tenir la situation, il recommande environ <b>${nf0.format(needed)} CRS et gendarmes mobiles</b>. Trop peu : ça déborde. Beaucoup trop : ça dérape.</div>
+    <div class="slider">
+      <div class="row"><span>Forces de l’ordre envoyées</span><span class="crsnum" id="crsN">${nf0.format(needed)}</span></div>
+      <input type="range" id="crs" min="0" max="100000" step="500" value="${needed}">
+      <div class="row muted"><span id="crsCost"></span><span id="crsRatio"></span></div>
+    </div>
+    <div class="mopts">
+      <button class="primary" data-a="crs"><b>🚓 Envoyer les CRS</b><small>Avec le nombre choisi ci-dessus</small></button>
+      <button data-a="cede"><b>🤝 Céder sur tout</b><small>Chèque, recul, prime : ça coûte cher</small></button>
+      <button data-a="ignore"><b>🏖️ Ignorer et partir en vacances</b><small>${vacances.split(".")[0]}</small></button>
+      <button data-a="special"><b>${special.label}</b><small>${special.sub}</small></button>
+    </div>`);
+  const sl = $("#crs");
+  const upd = () => {
+    const v = +sl.value, q = v / needed;
+    $("#crsN").textContent = nf0.format(v);
+    $("#crsCost").textContent = "Coût : " + fmtMd(v * 0.00005) + " (heures sup, lacrymo, sandwichs)";
+    $("#crsRatio").textContent = v === 0 ? "Aucun CRS : bon courage" : q < 0.5 ? "Très insuffisant" : q < 1.4 ? "Dosage « à la française »" : q < 2.5 ? "Surdimensionné" : "Démesuré";
+  };
+  sl.oninput = upd; upd();
+  document.querySelectorAll(".mopts button").forEach(b => b.onclick = () => {
+    const a = b.dataset.a, before = snap();
+    let r, ttl, e, n;
+    if(a === "crs"){
+      const v = +sl.value, q = v / needed, cost = v * 0.00005;
+      if(v === 0 || q < 0.5){
+        const casse = 0.2 + police / 1e6 * 2;
+        e = {d:cost + casse, pop:-5, col:10}; ttl = "Débordements !";
+        r = pick(["Des casseurs incendient une rotonde, une banque, un fast-food et la trottinette d’un député.","Les vitrines de trois avenues volent en éclats. Le préfet annonce que « la situation est sous contrôle » devant un kiosque en feu.","La manif déborde jusqu’au périphérique. Un manège de la foire du Trône est pris en otage."]) + ` Facture de la casse : ${fmtMd(casse)}.`;
+        n = "Débordements en marge de la manifestation : « une journée de chaos »";
+      } else if(q < 1.4){
+        e = {d:cost, pop:-1, col:-12}; ttl = "Maintien de l’ordre « à la française »";
+        r = "Les CRS encadrent le cortège. Quelques lacrymos, quelques merguez, puis tout le monde se disperse vers 18 h pour l’apéro. La colère retombe un peu.";
+        n = "Manifestation : le cortège se disperse dans le calme, et vers les terrasses";
+      } else if(q < 2.5){
+        e = {d:cost, pop:-7, col:4}; ttl = "Surréaction policière";
+        r = "Nasse de 6 heures, 400 gardes à vue, dont 380 passants, deux touristes japonais et un pigeon.";
+        if(Math.random() < 0.4){ e.pop -= 4; e.col += 8; r += " Une vidéo d’une interpellation musclée devient virale : le Défenseur des droits s’en mêle."; }
+        n = "Maintien de l’ordre : la nasse géante fait polémique";
+      } else {
+        e = {d:cost, pop:-10, col:8}; ttl = "Démonstration de force absurde";
+        r = `Il y a ${nf1.format(v/police)} CRS par manifestant. Désœuvrés, les CRS finissent par manifester eux-mêmes pour leurs heures supplémentaires.`;
+        n = "Plus de CRS que de manifestants : « on se croirait à un défilé militaire »";
+      }
+      r += ` Coût de l’opération : ${fmtMd(cost)}.`;
+    } else if(a === "cede"){
+      const cost = M.demand * rnd(0.8, 1.3);
+      e = {d:cost, def:M.demand/16, pop:5, col:-25}; ttl = "Vous cédez sur tout";
+      r = `Les manifestants obtiennent tout. Les syndicats, pris de court, n’avaient pas prévu de victoire et doivent improviser un communiqué. Facture : ${fmtMd(cost)}, plus des dépenses permanentes.`;
+      n = "Le gouvernement cède : « une victoire historique », reconnaissent les syndicats, surpris";
+    } else if(a === "ignore"){
+      e = {pop:-4, col:12}; ttl = "Vous ignorez la rue";
+      r = vacances + " Les manifestants l’apprennent par les journaux. La colère monte d’un cran.";
+      n = "Pendant la manifestation, le chef de l’État en vacances : polémique";
+    } else {
+      e = special.e; ttl = special.label; r = special.r; n = special.label + " : la séquence fait réagir";
+    }
+    applyE(e);
+    addNews(n);
+    pushLog(dateOf(S.turn), title + " → " + ttl);
+    let sc;
+    if(a === "crs") sc = ttl.startsWith("Maintien") ? (look[0] === "road" ? [look[0], Object.assign({}, look[1], {caption:n})] : ["march", Object.assign({}, look[1], {calm:true, caption:n})]) : ["riot", {caption:n}];
+    else if(a === "cede") sc = ["party", {sign:"VICTOIRE !", caption:n}];
+    else if(a === "ignore") sc = ["beach", {place:BEACH_PLACE[c], caption:n}];
+    else sc = {macron:["tv",{caption:"Grand Débat national : 7 heures de monologue"}], melenchon:["march",{sign:"LE TRIBUN EST LÀ !", balloon:"RÉVOLUTION !", caption:n}], lepen:["tv",{caption:"Jordan en direct sur TikTok devant la manif"}]}[c];
+    showResult({kicker:"Manifestation · issue", title:ttl, text:r, before, after:snap(), scene:sc, onContinue:done});
+  });
+}
+
+/* ---------------------------------------------------------------------
+   Toasts
+   --------------------------------------------------------------------- */
+function toast(t){
+  const d = document.createElement("div"); d.className = "toast"; d.textContent = t;
+  $("#toasts").appendChild(d); setTimeout(() => d.remove(), 4200);
+}
+
+/* ---------------------------------------------------------------------
+   Fin de partie
+   --------------------------------------------------------------------- */
+function computeScore(type){
+  let s = (S.dette - DETTE0) + Math.max(0, 50 - S.pop) * 20 + S.col * 3 + S.pms * 80;
+  if(type === "win") s += 1500 + (TURNS - S.turn) * 100;
+  if(type === "revolution") s += 600;
+  if(type === "adored" || type === "austerity") s *= 0.4;
+  return Math.max(0, Math.round(s));
+}
+
+function chartSVG(values, {min, max, target, color, label, unit}){
+  const W = 320, H = 150, pl = 34, pr = 10, pt = 14, pb = 22;
+  const lo = Math.min(min, ...values), hi = Math.max(max, ...values);
+  const x = i => pl + i * (W - pl - pr) / Math.max(1, values.length - 1);
+  const y = v => pt + (1 - (v - lo) / (hi - lo || 1)) * (H - pt - pb);
+  const pts = values.map((v,i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
+  const ticks = [lo, (lo+hi)/2, hi];
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${label}">
+    ${ticks.map(t => `<line x1="${pl}" x2="${W-pr}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)" stroke-width="1"/><text x="${pl-5}" y="${y(t)+3}" font-size="9" text-anchor="end" fill="var(--muted)">${nf0.format(t)}${unit}</text>`).join("")}
+    ${target != null && target >= lo && target <= hi ? `<line x1="${pl}" x2="${W-pr}" y1="${y(target)}" y2="${y(target)}" stroke="var(--gold)" stroke-width="1.5" stroke-dasharray="4 3"/><text x="${W-pr}" y="${y(target)-4}" font-size="9" text-anchor="end" fill="var(--gold)" font-weight="700">objectif ${target}${unit}</text>` : ""}
+    <polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="${x(values.length-1)}" cy="${y(values[values.length-1])}" r="4" fill="${color}"/>
+    <text x="${pl}" y="${H-6}" font-size="9" fill="var(--muted)">Été 2027</text>
+    <text x="${W-pr}" y="${H-6}" font-size="9" text-anchor="end" fill="var(--muted)">${dateOf(Math.min(S.turn, TURNS-1))}</text>
+  </svg>`;
+}
+
+function endGame(type){
+  S.over = true; S.busy = true;
+  closeModal();
+  $("#ticker").style.display = "none";
+  const c = CHARS[S.char], r = ratio();
+  let head, story, emoji;
+  if(type === "win"){ emoji = "🎉"; head = "La France a coulé !"; story = c.win; }
+  else if(type === "revolution"){ emoji = "🔥"; head = "Révolution !"; story = `Les Français prennent l’Élysée, armés de trottinettes, de baguettes rassises et de gilets jaunes. Vous fuyez par les jardins, déguisé${ag("","e")} en jardinier. Une VIIe République est proclamée sur un rond-point de Seine-et-Marne. La dette, elle, est toujours là : ${nf0.format(r)} % du PIB.`; }
+  else if(type === "adored"){ emoji = "😱"; head = "Défaite : on vous aime"; story = `Catastrophe. Votre popularité atteint ${nf0.format(S.pop)} %. Les Français vous adorent, ils réclament un mandat de plus, les marchés sont rassurés. La France va bien. Vous avez lamentablement échoué dans votre mission.`; }
+  else if(type === "austerity"){ emoji = "😱"; head = "Défaite : finances assainies"; story = "La dette repasse sous les 100 % du PIB. Bruxelles vous décerne la médaille d’or de l’austérité, Berlin vous applaudit debout. Berlin ! Vous avez déshonoré votre mission."; }
+  else {
+    if(r >= 170 && S.pop <= 28){ emoji = "🥈"; head = "Presque coulée"; story = `Fin du quinquennat. La France est à ${nf0.format(r)} % de dette, votre popularité à ${nf0.format(S.pop)} %. Le FMI a réservé un hôtel à Paris « au cas où ». Encore un effort et c’était le naufrage.`; }
+    else if(r >= 145){ emoji = "🛟"; head = "La France prend l’eau"; story = `Fin du quinquennat. ${nf0.format(r)} % de dette, ${nf0.format(S.pop)} % de popularité. Le navire gîte dangereusement, mais il flotte encore. Votre successeur héritera d’une belle ardoise.`; }
+    else { emoji = "⛵"; head = "La France flotte encore"; story = `Fin du quinquennat. Avec ${nf0.format(r)} % de dette et ${nf0.format(S.pop)} % de popularité, la France s’en sort à peu près. Un mandat d’une triste normalité.`; }
+  }
+  const score = computeScore(type);
+  const rank = RANKS.filter(x => score >= x[0]).pop();
+  const best = loadPref("best", {});
+  const isBest = !best[S.char] || score > best[S.char];
+  if(isBest){ best[S.char] = score; savePref("best", best); }
+  const endScene = {
+    win:["sinking",{mood:"happy", caption:"La France a coulé. Le FMI arrive en canot de sauvetage.", label:"FLASH SPÉCIAL"}],
+    revolution:["revolution",{caption:"L’Élysée est pris d’assaut", label:"FLASH SPÉCIAL"}],
+    adored:["party",{mood:"panic", sign:"ON T’AIME !", caption:"Les Français vous adorent. Échec total."}],
+    austerity:["office",{mood:"panic", caption:"La dette baisse. Bruxelles applaudit. Quelle honte."}]
+  }[type] || (head === "Presque coulée" ? ["sinking",{mood:"smug", caption:"Le navire coule… mais trop tard pour vous"}] : ["sea",{caption:head}]);
+  $("#app").innerHTML = `
+  <div class="stripe"></div>
+  <main class="wrap">
+    <section class="endhero">
+      ${clip(endScene[0], endScene[1])}
+      <div class="kicker">${c.name} · ${dateOf(Math.min(S.turn, TURNS-1))} · fin de partie</div>
+      <h1>${emoji} ${head}</h1>
+      <p class="story">${story}</p>
+      <div class="score"><div class="tl">Score de naufrage</div><div class="num">${nf0.format(score)}</div><div class="rank">${rank[1]}</div><div class="muted">${rank[2]}</div>${isBest?`<div class="ok" style="margin-top:6px">🏆 Nouveau record pour ${c.name} !</div>`:`<div class="muted" style="margin-top:6px">Record : ${nf0.format(best[S.char])}</div>`}</div>
+    </section>
+    <section class="endstats">
+      <div class="tile"><div class="tl">Dette finale</div><div class="num">${fmtMd(S.dette)}</div><div class="sub">${nf1.format(r)} % du PIB · ${sgn(S.dette-DETTE0,fmtMd)}</div></div>
+      <div class="tile"><div class="tl">Popularité finale</div><div class="num">${nf0.format(S.pop)} %</div><div class="sub">Départ : ${c.pop} %</div></div>
+      <div class="tile"><div class="tl">Note finale</div><div class="num">${note()}</div><div class="sub">Taux moyen ${nf1.format(taux())} %</div></div>
+      <div class="tile"><div class="tl">Premiers ministres tombés</div><div class="num">${S.pms}</div><div class="sub">Colère finale : ${nf0.format(S.col)} %</div></div>
+    </section>
+    <section class="charts">
+      <div class="panel"><h4>Dette / PIB (%)</h4>${chartSVG(S.hist.map(h=>h.ratio),{min:100,max:WIN_RATIO+10,target:WIN_RATIO,color:"var(--red)",label:"Évolution de la dette rapportée au PIB",unit:" %"})}</div>
+      <div class="panel"><h4>Popularité (%)</h4>${chartSVG(S.hist.map(h=>h.pop),{min:0,max:70,target:WIN_POP,color:"var(--blue)",label:"Évolution de la popularité",unit:" %"})}</div>
+    </section>
+    <section class="panel" style="margin-top:14px">
+      <h4>Le mandat en bref</h4>
+      <ul class="log" style="max-height:none">${S.log.map(l=>`<li><b>${l.d}</b>${esc(l.t)}</li>`).join("")}</ul>
+    </section>
+    <div class="btnrow" style="justify-content:center;margin:22px 0">
+      <button class="btn red" id="again">Rejouer avec ${c.name}</button>
+      <button class="btn alt" id="other">Changer de personnage</button>
+    </div>
+  </main>`;
+  const key = S.char;
+  $("#again").onclick = () => newGame(key);
+  $("#other").onclick = renderSelect;
+  window.scrollTo({top:0});
+}
+
+/* ---------------------------------------------------------------------
+   Préférences locales (facultatives)
+   --------------------------------------------------------------------- */
+function loadPref(k, def){ try{ const v = localStorage.getItem("naufrage_" + k); return v == null ? def : JSON.parse(v); }catch(e){ return def; } }
+function savePref(k, v){ try{ localStorage.setItem("naufrage_" + k, JSON.stringify(v)); }catch(e){} }
+
+/* ---------------------------------------------------------------------
+   Compteur de dette en direct + clavier
+   --------------------------------------------------------------------- */
+let lastT = performance.now();
+function tick(t){
+  const dt = Math.min(0.25, (t - lastT) / 1000); lastT = t;
+  if(S && !S.over){
+    S.dette += deficitYear() / 31536000 * dt;   // Md€ par seconde réelle
+    const el = document.getElementById("detteLive");
+    if(el) el.textContent = fmtEur(S.dette);
+  }
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+
+document.addEventListener("keydown", ev => {
+  if(!S || S.over) return;
+  const open = !$("#overlay").classList.contains("hidden");
+  if(open){ if(ev.key === "Enter" && $("#cont")){ ev.preventDefault(); $("#cont").click(); } return; }
+  const n = parseInt(ev.key, 10);
+  if(n >= 1 && S.card && n <= S.card.options.length) choose(n - 1);
+});
+
+renderSelect();
+</script>
+</body>
+</html>
