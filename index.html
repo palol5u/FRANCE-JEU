@@ -204,6 +204,11 @@ h1,h2,.brand,.anton{font-family:Anton,Impact,sans-serif;font-weight:400;letter-s
 .cardtop{display:flex;gap:14px;align-items:center}
 .sound{background:var(--surface2);border:1px solid var(--line);border-radius:99px;padding:4px 12px;font-size:13px;font-weight:600}
 .endhero .clip{max-width:760px;margin:0 auto 18px}
+.don{display:inline-flex;align-items:center;gap:8px;background:#ffd23f;color:#17191f;border:0;border-radius:10px;padding:12px 18px;font-weight:800;text-decoration:none;box-shadow:0 2px 0 rgba(0,0,0,.15);transition:transform .12s}
+.don:hover{transform:translateY(-2px)}
+.donbox{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin:16px 0 0;max-width:900px;background:var(--surface);border:1px dashed var(--gold);border-radius:12px;padding:12px 14px}
+.donbox p{margin:0;flex:1;min-width:220px;font-size:14px}
+.side .don{justify-content:center}
 
 /* animations des scènes (jamais d'attribut transform sur un élément animé) */
 .clip [class^="a-"],.clip [class*=" a-"]{transform-box:fill-box;transform-origin:center}
@@ -326,6 +331,7 @@ const TURNS = 20;
 const PIB0 = 3080;     // PIB nominal 2027 (Md€), approximatif
 const DETTE0 = 3720;   // dette publique 2027 (Md€), approximatif
 const WIN_RATIO = 200, WIN_POP = 20;
+const DON_URL = "https://buy.stripe.com/7sY5kE0mneGrbktfVz7g406";   // lien de paiement Stripe à prix libre
 
 // [seuil dette/PIB, note, taux apparent moyen %]
 const RATINGS = [[85,"AAA",1.2],[95,"AA+",1.4],[105,"AA",1.6],[112,"AA-",1.8],[122,"A+",2.0],[130,"A",2.3],[138,"A-",2.7],[146,"BBB+",3.4],[155,"BBB",4.3],[165,"BBB-",5.4],[175,"BB",6.8],[185,"B",8.5],[200,"CCC",11.0],[Infinity,"D",14.0]];
@@ -1482,6 +1488,7 @@ function renderSelect(){
           <li>🔥 Si la colère sociale atteint 100 % : <b>révolution</b>. Fin de partie, avec un joli bonus.</li>
         </ul>
       </details>
+      <div class="donbox"><p><b>Le jeu vous fait rire ?</b> La France est en faillite, mais vous pouvez encore sauver le développeur. Prix libre, à partir de 1 €.</p><a class="don" href="${DON_URL}" target="_blank" rel="noopener">☕ Soutenir le jeu</a></div>
     </header>
     <h2 class="sec">Choisissez votre personnage</h2>
     <div class="chars">
@@ -1595,6 +1602,7 @@ function renderGame(){
           <h4>Journal du mandat</h4>
           <ul class="log">${S.log.slice().reverse().slice(0,14).map(l=>`<li><b>${l.d}</b>${esc(l.t)}</li>`).join("")}</ul>
         </div>
+        <a class="don" href="${DON_URL}" target="_blank" rel="noopener">☕ Soutenir le développeur</a>
         <button class="btn alt" id="quit">Abandonner et changer de personnage</button>
       </aside>
     </div>
@@ -1944,6 +1952,7 @@ function endGame(type){
     <div class="btnrow" style="justify-content:center;margin:22px 0">
       <button class="btn red" id="again">Rejouer avec ${c.name}</button>
       <button class="btn alt" id="other">Changer de personnage</button>
+      <a class="don" href="${DON_URL}" target="_blank" rel="noopener">☕ ${type === "win" ? "La France a coulé, pas le développeur : soutenez-le" : "Soutenir le jeu (prix libre)"}</a>
     </div>
   </main>`;
   const key = S.char;
